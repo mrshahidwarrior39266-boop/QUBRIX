@@ -113,6 +113,14 @@ with st.sidebar:
     st.title("🎓 RubricGrader AI")
     st.caption("Explainable AI Short-Answer Scoring")
 
+    st.markdown("""
+        <div style="background: rgba(220,20,60,0.15); border: 1px solid rgba(220,20,60,0.4); padding: 8px 12px; border-radius: 8px; margin-top: 8px; margin-bottom: 8px;">
+            <a href="http://localhost:8000" target="_blank" style="color: #F5D77F; text-decoration: none; font-weight: bold; font-size: 12px;">
+                ✨ Open 3D WebGL Cyber-Studio (:8000) ➔
+            </a>
+        </div>
+    """, unsafe_allow_html=True)
+
     st.markdown("---")
     st.subheader("1. Select Dataset")
     subject_choice = st.selectbox(

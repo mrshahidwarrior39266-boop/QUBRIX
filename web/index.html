@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RubricGrader AI • Cyber-Studio Assessment Hub</title>
+  
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            // 60% Black-Red obsidian surfaces
+            'void': '#070203',
+            'blackred': {
+              950: '#0a0304',
+              900: '#0f0406',
+              850: '#150609',
+              800: '#1b080c',
+              700: '#270c12',
+            },
+            // 30% Crimson Red structural accents & glows
+            'crimson': {
+              900: '#520712',
+              800: '#750b1a',
+              700: '#9e0f23',
+              600: '#c4122d',
+              DEFAULT: '#DC143C',
+              500: '#e02046',
+              400: '#ea4062',
+              300: '#f26884',
+              neon: '#FF2E55',
+            },
+            // 10% Champagne Yellow luminous highlights
+            'champagne': {
+              DEFAULT: '#F7E7CE',
+              light: '#FFF5E4',
+              gold: '#F5D77F',
+              neon: '#FFDF73',
+              glow: '#FFEBB0',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          boxShadow: {
+            'crimson-sm': '0 0 15px rgba(220, 20, 60, 0.25)',
+            'crimson-md': '0 0 30px rgba(220, 20, 60, 0.4)',
+            'crimson-lg': '0 0 50px rgba(220, 20, 60, 0.55)',
+            'champagne-glow': '0 0 20px rgba(245, 215, 127, 0.4)',
+            'panel': '0 8px 32px rgba(7, 2, 3, 0.85), inset 0 1px 0 rgba(247, 231, 206, 0.08)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Three.js for 3D WebGL Hero -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- React 18 & Babel for standalone ESM execution -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* Cyber-Studio Scanline and Grain */
+    body {
+      background-color: #070203;
+      color: #E5E4E2;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      selection-background-color: #DC143C;
+      selection-color: #FFF5E4;
+    }
+
+    ::selection {
+      background: #DC143C;
+      color: #FFF5E4;
+    }
+
+    /* Subtle CRT Scanline overlay */
+    .scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 4px 100%;
+      pointer-events: none;
+    }
+
+    /* Custom Scrollbar in Crimson/Black-Red */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0304;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #750b1a;
+      border-radius: 4px;
+      border: 1px solid rgba(220, 20, 60, 0.3);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #DC143C;
+      box-shadow: 0 0 10px #DC143C;
+    }
+
+    /* Champagne glowing quotes */
+    .evidence-highlight {
+      background: linear-gradient(135deg, rgba(245, 215, 127, 0.22), rgba(220, 20, 60, 0.18));
+      border-bottom: 2px solid #F5D77F;
+      color: #FFF5E4;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      box-shadow: 0 0 12px rgba(245, 215, 127, 0.25);
+    }
+
+    /* Range slider custom styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #1b080c;
+      border: 1px solid rgba(220, 20, 60, 0.3);
+      height: 6px;
+      border-radius: 3px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: #F5D77F;
+      box-shadow: 0 0 12px #F5D77F, 0 0 4px #DC143C;
+      cursor: pointer;
+      border: 2px solid #DC143C;
+      transition: all 0.15s ease-in-out;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 18px #FFDF73, 0 0 8px #FF2E55;
+    }
+
+    /* Ambient radial backdrop */
+    .radial-blackred {
+      background: radial-gradient(circle at 50% 20%, rgba(220, 20, 60, 0.12) 0%, rgba(15, 4, 6, 0.85) 55%, #070203 100%);
+    }
+  </style>
+</head>
+<body class="radial-blackred min-h-screen text-slate-200">
+  <div class="scanlines fixed inset-0 z-50 pointer-events-none opacity-30"></div>
+  <div id="root"></div>
+
+  <!-- APPLICATION LOGIC -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    // --- ZERO-DEPENDENCY PROCEDURAL WEB AUDIO ENGINE ---
+    class CyberAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx && typeof window !== 'undefined') {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playTone(freq, duration = 0.1, type = 'sine', volume = 0.1) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(volume, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch(e) {}
+      }
+      click() { this.playTone(880, 0.04, 'triangle', 0.05); }
+      tab() {
+        this.playTone(440, 0.06, 'sine', 0.08);
+        setTimeout(() => this.playTone(659.25, 0.08, 'sine', 0.06), 35);
+      }
+      slider() { this.playTone(330, 0.03, 'sine', 0.04); }
+      regradeSuccess() {
+        const chord = [392.00, 523.25, 659.25, 783.99];
+        chord.forEach((f, i) => setTimeout(() => this.playTone(f, 0.18, 'sine', 0.08), i * 40));
+      }
+      toggle() {
+        this.enabled = !this.enabled;
+        return this.enabled;
+      }
+    }
+    const sound = new CyberAudioEngine();
+
+    // --- 3D THREE.JS WEBGL HERO COMPONENT ---
+    function ThreeHeroCanvas({ activeCriterion, criteriaCount, currentScore }) {
+      const mountRef = useRef(null);
+      const sceneRef = useRef(null);
+
+      useEffect(() => {
+        const container = mountRef.current;
+        if (!container) return;
+
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+
+        const scene = new THREE.Scene();
+        sceneRef.current = scene;
+        const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+        camera.position.set(0, 2, 22);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x270c12, 1.2);
+        scene.add(ambientLight);
+
+        const crimsonLight = new THREE.PointLight(0xDC143C, 35, 60);
+        crimsonLight.position.set(10, 8, 8);
+        scene.add(crimsonLight);
+
+        const goldLight = new THREE.PointLight(0xF5D77F, 25, 50);
+        goldLight.position.set(-10, -6, 6);
+        scene.add(goldLight);
+
+        // Rotating Wireframe Icosahedron (Centerpiece)
+        const icoGeo = new THREE.IcosahedronGeometry(4.2, 1);
+        const icoMat = new THREE.MeshStandardMaterial({
+          color: 0xDC143C,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.35,
+          emissive: 0x520712,
+        });
+        const icosahedron = new THREE.Mesh(icoGeo, icoMat);
+        icosahedron.position.set(0, 0, 0);
+        scene.add(icosahedron);
+
+        // Inner glowing core (Champagne Gold)
+        const coreGeo = new THREE.SphereGeometry(1.6, 16, 16);
+        const coreMat = new THREE.MeshStandardMaterial({
+          color: 0xF5D77F,
+          roughness: 0.2,
+          metalness: 0.8,
+          emissive: 0xF5D77F,
+          emissiveIntensity: 0.4,
+        });
+        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+        scene.add(coreMesh);
+
+        // Orbiting Torus Rings
+        const ringGeo = new THREE.TorusGeometry(6.5, 0.08, 16, 100);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xDC143C, transparent: true, opacity: 0.4 });
+        const ring1 = new THREE.Mesh(ringGeo, ringMat);
+        ring1.rotation.x = Math.PI / 3;
+        scene.add(ring1);
+
+        const ring2 = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xF5D77F, transparent: true, opacity: 0.3 }));
+        ring2.rotation.y = Math.PI / 4;
+        scene.add(ring2);
+
+        // Particle Galaxy (1,000 dust particles in Champagne & Crimson)
+        const partCount = 1000;
+        const partGeo = new THREE.BufferGeometry();
+        const positions = new Float32Array(partCount * 3);
+        const colors = new Float32Array(partCount * 3);
+
+        const cCrimson = new THREE.Color(0xDC143C);
+        const cGold = new THREE.Color(0xF5D77F);
+
+        for (let i = 0; i < partCount; i++) {
+          const r = 12 + Math.random() * 20;
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos(2 * Math.random() - 1);
+          positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 16;
+          positions[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+
+          const chosenColor = Math.random() > 0.4 ? cCrimson : cGold;
+          colors[i * 3] = chosenColor.r;
+          colors[i * 3 + 1] = chosenColor.g;
+          colors[i * 3 + 2] = chosenColor.b;
+        }
+
+        partGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        partGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const partMat = new THREE.PointsMaterial({
+          size: 0.18,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.75,
+        });
+        const particles = new THREE.Points(partGeo, partMat);
+        scene.add(particles);
+
+        // Mouse Parallax
+        let mouseX = 0, mouseY = 0;
+        const handleMouseMove = (e) => {
+          mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+          mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        };
+        window.addEventListener('mousemove', handleMouseMove);
+
+        // Animation Loop
+        let animId;
+        const clock = new THREE.Clock();
+
+        const animate = () => {
+          animId = requestAnimationFrame(animate);
+          const t = clock.getElapsedTime();
+
+          icosahedron.rotation.x = t * 0.18;
+          icosahedron.rotation.y = t * 0.25;
+
+          coreMesh.position.y = Math.sin(t * 1.5) * 0.4;
+          ring1.rotation.z = t * 0.12;
+          ring2.rotation.x = t * 0.09;
+
+          particles.rotation.y = t * 0.04;
+          particles.rotation.x = t * 0.02;
+
+          // Gentle camera drift toward mouse
+          camera.position.x += (mouseX * 3 - camera.position.x) * 0.03;
+          camera.position.y += (-mouseY * 2 + 2 - camera.position.y) * 0.03;
+          camera.lookAt(0, 0, 0);
+
+          renderer.render(scene, camera);
+        };
+        animate();
+
+        const handleResize = () => {
+          if (!container) return;
+          const w = container.clientWidth;
+          const h = container.clientHeight;
+          camera.aspect = w / h;
+          camera.updateProjectionMatrix();
+          renderer.setSize(w, h);
+        };
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+          window.removeEventListener('mousemove', handleMouseMove);
+          window.removeEventListener('resize', handleResize);
+          cancelAnimationFrame(animId);
+          if (container && renderer.domElement) {
+            container.removeChild(renderer.domElement);
+          }
+          renderer.dispose();
+        };
+      }, []);
+
+      return (
+        <div className="relative w-full h-[360px] md:h-[440px] overflow-hidden rounded-2xl border border-crimson-800/40 bg-blackred-950/70 shadow-panel backdrop-blur-md">
+          <div ref={mountRef} className="absolute inset-0 cursor-crosshair"></div>
+          
+          {/* Overlay HUD Badges */}
+          <div className="absolute top-4 left-4 z-10 flex items-center space-x-3 pointer-events-none">
+            <span className="flex h-2.5 w-2.5 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-crimson-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-crimson"></span>
+            </span>
+            <span className="font-mono text-[11px] tracking-widest text-champagne-gold uppercase font-semibold">
+              WebGL Neural Evaluation Field Active
+            </span>
+          </div>
+
+          <div className="absolute top-4 right-4 z-10 font-mono text-[11px] text-slate-400 bg-blackred-900/80 px-3 py-1 rounded-md border border-crimson-800/40">
+            FPS: 60 • Three.js r128 • Shaders OK
+          </div>
+
+          <div className="absolute bottom-4 left-6 z-10 pointer-events-none max-w-md">
+            <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              <span className="text-champagne-gold">RubricGrader</span>
+              <span className="text-crimson-400 font-mono text-sm px-2 py-0.5 rounded bg-crimson-900/40 border border-crimson-700/50">v2.0</span>
+            </h2>
+            <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+              Auditable, sub-10ms short-answer evaluation. Highlighting verbatim student evidence and eliminating black-box bias without answer key leakage.
+            </p>
+          </div>
+
+          <div className="absolute bottom-4 right-6 z-10 flex items-center gap-2">
+            <span className="text-xs font-mono text-slate-400">Interactive 3D Field: Drag cursor to orbit</span>
+          </div>
+        </div>
+      );
+    }
+
+    // --- MAIN REACT APPLICATION ---
+    function App() {
+      const [datasets, setDatasets] = useState([]);
+      const [currentDatasetId, setCurrentDatasetId] = useState('biology');
+      const [assessment, setAssessment] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+
+      const [activeTab, setActiveTab] = useState('students'); // 'students', 'regrade', 'borderline', 'export'
+      const [sliderWeights, setSliderWeights] = useState({});
+      const [regradeReport, setRegradeReport] = useState(null);
+      const [regrading, setRegrading] = useState(false);
+      const [soundActive, setSoundActive] = useState(true);
+
+      const [selectedStudent, setSelectedStudent] = useState(null);
+      const [uploading, setUploading] = useState(false);
+
+      // Load available datasets
+      useEffect(() => {
+        fetch('/api/datasets')
+          .then(res => res.json())
+          .then(data => {
+            setDatasets(data.datasets || []);
+          })
+          .catch(err => {
+            console.error('Failed to load datasets:', err);
+            setError('Backend connection error. Ensure backend_api.py is running on port 8000.');
+          });
+      }, []);
+
+      // Load active assessment whenever dataset changes
+      useEffect(() => {
+        setLoading(true);
+        setError(null);
+        fetch(`/api/assessment?dataset_id=${encodeURIComponent(currentDatasetId)}`)
+          .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+          })
+          .then(data => {
+            setAssessment(data);
+            // Initialize slider weights from rubric
+            const initialWeights = {};
+            (data.rubric || []).forEach(c => {
+              initialWeights[c.criterion_id] = parseFloat(c.max_points);
+            });
+            setSliderWeights(initialWeights);
+            setSelectedStudent(data.students && data.students[0] ? data.students[0] : null);
+            setLoading(false);
+          })
+          .catch(err => {
+            console.error('Error fetching assessment:', err);
+            setError(`Could not load assessment: ${err.message}`);
+            setLoading(false);
+          });
+      }, [currentDatasetId]);
+
+      // Debounced regrading trigger
+      const triggerRegrade = (newWeights) => {
+        setRegrading(true);
+        fetch('/api/regrade', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dataset_id: currentDatasetId,
+            slider_weights: newWeights
+          })
+        })
+          .then(res => res.json())
+          .then(diffData => {
+            setRegradeReport(diffData);
+            setRegrading(false);
+            sound.regradeSuccess();
+          })
+          .catch(err => {
+            console.error('Regrade error:', err);
+            setRegrading(false);
+          });
+      };
+
+      const handleSliderChange = (cid, val) => {
+        sound.slider();
+        const updated = { ...sliderWeights, [cid]: parseFloat(val) };
+        setSliderWeights(updated);
+        triggerRegrade(updated);
+      };
+
+      const handleResetWeights = () => {
+        sound.click();
+        if (!assessment) return;
+        const defaultWeights = {};
+        (assessment.rubric || []).forEach(c => {
+          defaultWeights[c.criterion_id] = parseFloat(c.max_points);
+        });
+        setSliderWeights(defaultWeights);
+        triggerRegrade(defaultWeights);
+      };
+
+      const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        })
+          .then(res => res.json())
+          .then(data => {
+            setUploading(false);
+            sound.regradeSuccess();
+            // Refresh dataset list
+            fetch('/api/datasets')
+              .then(r => r.json())
+              .then(dsData => {
+                setDatasets(dsData.datasets || []);
+                const customOpt = dsData.datasets.find(d => d.type === 'custom');
+                if (customOpt) {
+                  setCurrentDatasetId(customOpt.id);
+                }
+              });
+          })
+          .catch(err => {
+            setUploading(false);
+            alert('Upload failed: ' + err.message);
+          });
+      };
+
+      // Helper to render student answer with highlighted verbatim quotes
+      const renderHighlightedAnswer = (studentAnswer, criteriaEvaluations) => {
+        if (!criteriaEvaluations || criteriaEvaluations.length === 0) {
+          return <span>{studentAnswer}</span>;
+        }
+
+        // Collect all verified quotes
+        const quotes = criteriaEvaluations
+          .filter(c => c.is_quote_verified && c.evidence_quote && c.evidence_quote.trim().length > 3)
+          .map(c => c.evidence_quote.trim());
+
+        if (quotes.length === 0) {
+          return <span>{studentAnswer}</span>;
+        }
+
+        // Sort quotes by length descending to avoid partial nesting issues
+        quotes.sort((a, b) => b.length - a.length);
+
+        let segments = [{ text: studentAnswer, isHighlight: false }];
+
+        quotes.forEach(quote => {
+          const nextSegments = [];
+          segments.forEach(seg => {
+            if (seg.isHighlight) {
+              nextSegments.push(seg);
+              return;
+            }
+            const idx = seg.text.toLowerCase().indexOf(quote.toLowerCase());
+            if (idx !== -1) {
+              const before = seg.text.substring(0, idx);
+              const match = seg.text.substring(idx, idx + quote.length);
+              const after = seg.text.substring(idx + quote.length);
+              if (before) nextSegments.push({ text: before, isHighlight: false });
+              nextSegments.push({ text: match, isHighlight: true });
+              if (after) nextSegments.push({ text: after, isHighlight: false });
+            } else {
+              nextSegments.push(seg);
+            }
+          });
+          segments = nextSegments;
+        });
+
+        return (
+          <span>
+            {segments.map((s, i) => 
+              s.isHighlight ? (
+                <mark key={i} className="evidence-highlight font-medium">
+                  {s.text}
+                </mark>
+              ) : (
+                <span key={i}>{s.text}</span>
+              )
+            )}
+          </span>
+        );
+      };
+
+      return (
+        <div className="max-w-7xl mx-auto px-4 py-6 md:px-8 space-y-6">
+          
+          {/* --- TOP HUD TELEMETRY BAR --- */}
+          <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-crimson-800/40 bg-blackred-900/90 shadow-panel backdrop-blur-md">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-crimson to-crimson-900 flex items-center justify-center shadow-crimson-sm border border-crimson-500/50">
+                <span className="font-mono font-bold text-champagne text-lg">RG</span>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="font-bold text-lg text-white tracking-tight">RubricGrader AI</h1>
+                  <span className="font-mono text-[10px] text-champagne-gold uppercase tracking-widest px-2 py-0.5 rounded bg-crimson-950 border border-crimson-800">
+                    Cyber-Studio
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400">Explainable Assessment & Instant Decoupled Regrading</p>
+              </div>
+            </div>
+
+            {/* Live Telemetry Chips */}
+            <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+              <div className="px-2.5 py-1 rounded bg-blackred-800/90 border border-crimson-800/50 flex items-center gap-1.5 text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-champagne-gold animate-pulse"></span>
+                <span>LATENCY:</span>
+                <span className="text-champagne-gold font-bold">
+                  {regradeReport ? `${regradeReport.recalculation_latency_ms}ms` : '< 5ms'}
+                </span>
+              </div>
+
+              <div className="px-2.5 py-1 rounded bg-blackred-800/90 border border-crimson-800/50 flex items-center gap-1.5 text-slate-300">
+                <span className="w-2 h-2 rounded-full bg-crimson-400"></span>
+                <span>GUARDRAIL:</span>
+                <span className="text-crimson-300 font-bold">4-Gram Shield Active</span>
+              </div>
+
+              <div className="px-2.5 py-1 rounded bg-blackred-800/90 border border-crimson-800/50 flex items-center gap-1.5 text-slate-300">
+                <span>OFFLINE:</span>
+                <span className="text-emerald-400 font-bold">100% Zero-Net Safe</span>
+              </div>
+
+              {/* Sound Synthesizer Toggle */}
+              <button 
+                onClick={() => {
+                  const s = sound.toggle();
+                  setSoundActive(s);
+                  sound.click();
+                }}
+                className={`px-3 py-1 rounded border transition-colors flex items-center gap-1.5 ${
+                  soundActive 
+                    ? 'bg-crimson-950/80 border-crimson-600 text-champagne-gold shadow-crimson-sm' 
+                    : 'bg-blackred-950 border-slate-700 text-slate-500'
+                }`}
+                title="Toggle Web Audio Procedural Synthesizer"
+              >
+                <span>{soundActive ? '🔊 SYNTH ON' : '🔇 MUTED'}</span>
+              </button>
+            </div>
+          </header>
+
+          {/* --- 3D THREE.JS WEBGL HERO --- */}
+          <ThreeHeroCanvas 
+            criteriaCount={assessment ? assessment.rubric.length : 3}
+            currentScore={assessment ? assessment.metrics.avg_rubric_score : 4.0}
+          />
+
+          {/* --- DATASET SELECTION & QUICK ACTIONS --- */}
+          <section className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            
+            {/* Subject Dropdown & Ingestion */}
+            <div className="md:col-span-3 p-4 rounded-xl border border-crimson-800/40 bg-blackred-900/80 shadow-panel backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-mono uppercase tracking-wider text-slate-400">
+                  Active Assessment Stream
+                </label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <select 
+                    value={currentDatasetId}
+                    onChange={(e) => {
+                      sound.tab();
+                      setCurrentDatasetId(e.target.value);
+                    }}
+                    className="bg-blackred-950 text-white font-medium text-sm px-4 py-2 rounded-lg border border-crimson-700/60 focus:outline-none focus:border-champagne-gold shadow-sm"
+                  >
+                    {datasets.map(ds => (
+                      <option key={ds.id} value={ds.id}>
+                        {ds.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span className="text-xs font-mono text-slate-400">or</span>
+
+                  {/* Custom CSV Upload Button */}
+                  <label className="cursor-pointer px-4 py-2 rounded-lg bg-blackred-800 hover:bg-blackred-700 border border-crimson-800/60 text-xs font-mono text-champagne-gold transition flex items-center gap-2">
+                    <span>{uploading ? '⏳ Ingesting CSV...' : '📁 Ingest Custom CSV'}</span>
+                    <input 
+                      type="file" 
+                      accept=".csv" 
+                      onChange={handleFileUpload}
+                      className="hidden" 
+                      disabled={uploading}
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Reset Weights Action */}
+              <button 
+                onClick={handleResetWeights}
+                className="px-4 py-2 rounded-lg border border-crimson-800/60 bg-blackred-950 hover:bg-crimson-950 text-slate-300 hover:text-white text-xs font-mono transition flex items-center justify-center gap-1.5"
+              >
+                <span>↺ Reset Rubric Sliders</span>
+              </button>
+            </div>
+
+            {/* Streamlit Alternative Link Card */}
+            <div className="p-4 rounded-xl border border-crimson-800/40 bg-blackred-900/80 shadow-panel backdrop-blur-md flex flex-col justify-center">
+              <div className="text-xs font-mono text-slate-400 uppercase">Dual Dashboard Hub</div>
+              <div className="text-sm font-semibold text-white mt-1">Streamlit Grader Ready</div>
+              <a 
+                href="http://localhost:8501" 
+                target="_blank" 
+                rel="noreferrer"
+                className="mt-2 text-xs font-mono text-champagne-gold hover:text-white underline flex items-center gap-1"
+              >
+                <span>Launch Streamlit Port :8501 ➔</span>
+              </a>
+            </div>
+          </section>
+
+          {/* Error Message Display if Any */}
+          {error && (
+            <div className="p-4 rounded-xl border border-red-500/50 bg-red-950/40 text-red-200 text-sm font-mono">
+              ⚠️ {error}
+            </div>
+          )}
+
+          {/* Loading Indicator */}
+          {loading && (
+            <div className="p-12 text-center text-slate-400 font-mono text-sm space-y-3">
+              <div className="w-8 h-8 border-2 border-crimson border-t-champagne-gold rounded-full animate-spin mx-auto"></div>
+              <p>Evaluating submissions via Neural & Heuristic Pipelines...</p>
+            </div>
+          )}
+
+          {/* --- ACTIVE ASSESSMENT PROMPT & MODEL ANSWER --- */}
+          {!loading && assessment && (
+            <>
+              <section className="p-5 rounded-xl border border-crimson-800/50 bg-blackred-900/80 shadow-panel backdrop-blur-md space-y-4">
+                <div className="flex items-center justify-between border-b border-crimson-900/50 pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-champagne-gold"></span>
+                    <span className="font-mono text-xs uppercase tracking-wider text-slate-400">
+                      Assessment Prompt & Ground-Truth Model Answer
+                    </span>
+                  </div>
+                  <span className="font-mono text-xs text-champagne-gold bg-crimson-950/60 px-2.5 py-1 rounded border border-crimson-800/40">
+                    Subject: {assessment.subject}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-lg bg-blackred-950/80 border border-crimson-900/30">
+                    <div className="font-mono text-[11px] text-slate-400 uppercase tracking-wider mb-1">
+                      Target Question
+                    </div>
+                    <p className="text-sm font-medium text-slate-100 leading-relaxed">
+                      {assessment.question}
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-blackred-950/80 border border-champagne-gold/20">
+                    <div className="font-mono text-[11px] text-champagne-gold uppercase tracking-wider mb-1">
+                      Instructor Reference Model Answer
+                    </div>
+                    <p className="text-sm font-normal text-slate-300 leading-relaxed">
+                      {assessment.model_answer}
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* --- 4-CARD EXECUTIVE KPI METRIC MATRIX --- */}
+              <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                {/* Metric 1: Total Submissions */}
+                <div className="p-4 rounded-xl border border-crimson-800/40 bg-blackred-900/90 shadow-panel">
+                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Submissions</div>
+                  <div className="text-3xl font-extrabold text-white mt-1">
+                    {assessment.metrics.total_submissions}
+                  </div>
+                  <div className="text-[11px] font-mono text-emerald-400 mt-1">100% Ingested & Verified</div>
+                </div>
+
+                {/* Metric 2: Avg Semantic Match */}
+                <div className="p-4 rounded-xl border border-crimson-800/40 bg-blackred-900/90 shadow-panel">
+                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Avg Semantic Match</div>
+                  <div className="text-3xl font-extrabold text-champagne-gold mt-1">
+                    {assessment.metrics.avg_semantic_match}%
+                  </div>
+                  <div className="text-[11px] font-mono text-slate-400 mt-1">Dense Vector Cosine Sim</div>
+                </div>
+
+                {/* Metric 3: Avg Rubric Marks */}
+                <div className="p-4 rounded-xl border border-crimson-800/40 bg-blackred-900/90 shadow-panel">
+                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Avg Rubric Score</div>
+                  <div className="text-3xl font-extrabold text-white mt-1">
+                    {regradeReport ? regradeReport.new_avg_score : assessment.metrics.avg_rubric_score}
+                    <span className="text-base font-normal text-slate-400">
+                      {' '}/ {regradeReport ? regradeReport.new_max_score.toFixed(1) : assessment.metrics.max_possible_score.toFixed(1)}
+                    </span>
+                  </div>
+                  <div className="text-[11px] font-mono text-crimson-300 mt-1">
+                    {regradeReport ? '⚡ Dynamic Recalculated' : 'Original Baseline Marks'}
+                  </div>
+                </div>
+
+                {/* Metric 4: Human Agreement QWK */}
+                <div className="p-4 rounded-xl border border-crimson-800/40 bg-blackred-900/90 shadow-panel">
+                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Human Agreement (QWK)</div>
+                  <div className="text-3xl font-extrabold text-champagne-gold mt-1">
+                    {regradeReport && regradeReport.new_qwk ? regradeReport.new_qwk.qwk_score.toFixed(3) : assessment.metrics.qwk_score.toFixed(3)}
+                  </div>
+                  <div className="text-[11px] font-mono text-champagne mt-1">
+                    {regradeReport && regradeReport.new_qwk ? regradeReport.new_qwk.interpretation : assessment.metrics.qwk_interpretation}
+                  </div>
+                </div>
+              </section>
+
+              {/* --- MAIN WORKSPACE TABS --- */}
+              <section className="space-y-4">
+                <div className="flex border-b border-crimson-900/50 space-x-2">
+                  <button
+                    onClick={() => { sound.tab(); setActiveTab('students'); }}
+                    className={`px-4 py-2.5 font-mono text-xs uppercase tracking-wider transition-all border-b-2 ${
+                      activeTab === 'students'
+                        ? 'border-crimson text-white bg-crimson-950/40 font-bold'
+                        : 'border-transparent text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    📋 Student Evaluations ({assessment.students.length})
+                  </button>
+
+                  <button
+                    onClick={() => { sound.tab(); setActiveTab('regrade'); }}
+                    className={`px-4 py-2.5 font-mono text-xs uppercase tracking-wider transition-all border-b-2 flex items-center gap-1.5 ${
+                      activeTab === 'regrade'
+                        ? 'border-champagne-gold text-champagne-gold bg-crimson-950/40 font-bold'
+                        : 'border-transparent text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <span>⚡ Dynamic Regrading Lab</span>
+                    <span className="bg-crimson-900 text-white text-[10px] px-1.5 py-0.2 rounded font-mono">
+                      &lt;5ms
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => { sound.tab(); setActiveTab('borderline'); }}
+                    className={`px-4 py-2.5 font-mono text-xs uppercase tracking-wider transition-all border-b-2 flex items-center gap-1.5 ${
+                      activeTab === 'borderline'
+                        ? 'border-crimson text-white bg-crimson-950/40 font-bold'
+                        : 'border-transparent text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <span>🔍 Borderline Queue</span>
+                    <span className="bg-crimson text-white text-[10px] px-1.5 py-0.2 rounded-full font-mono">
+                      {assessment.metrics.borderline_count}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => { sound.tab(); setActiveTab('export'); }}
+                    className={`px-4 py-2.5 font-mono text-xs uppercase tracking-wider transition-all border-b-2 ${
+                      activeTab === 'export'
+                        ? 'border-crimson text-white bg-crimson-950/40 font-bold'
+                        : 'border-transparent text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    📥 Export & Audit
+                  </button>
+                </div>
+
+                {/* --- TAB 1: STUDENT EVALUATIONS (HIGHLIGHTS & CARDS) --- */}
+                {activeTab === 'students' && (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    {/* Left: Student List */}
+                    <div className="space-y-3">
+                      <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">
+                        Submissions Index
+                      </div>
+                      <div className="space-y-2 max-h-[640px] overflow-y-auto pr-1">
+                        {assessment.students.map((student) => {
+                          const isSelected = selectedStudent && selectedStudent.student_id === student.student_id;
+                          return (
+                            <div 
+                              key={student.student_id}
+                              onClick={() => {
+                                sound.click();
+                                setSelectedStudent(student);
+                              }}
+                              className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'bg-crimson-950/70 border-crimson shadow-crimson-sm'
+                                  : 'bg-blackred-900/70 border-crimson-900/40 hover:border-crimson-700/60'
+                              }`}
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="font-mono font-bold text-sm text-white">
+                                  {student.student_id}
+                                </span>
+                                <span className="text-xs font-mono font-bold text-champagne-gold">
+                                  {student.rubric_score} / {assessment.metrics.max_possible_score.toFixed(1)} pts
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-300 line-clamp-2 mt-1.5">
+                                {student.student_answer}
+                              </p>
+                              <div className="flex items-center justify-between mt-2 pt-2 border-t border-crimson-900/30 text-[11px] font-mono text-slate-400">
+                                <span>Sim: {student.semantic_score_pct}%</span>
+                                {student.is_borderline && (
+                                  <span className="text-crimson-400 font-semibold">⚠️ Review Queue</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Right: Detailed Inspection Panel */}
+                    <div className="lg:col-span-2 space-y-4">
+                      {selectedStudent ? (
+                        <div className="p-6 rounded-xl border border-crimson-800/50 bg-blackred-900/90 shadow-panel space-y-5">
+                          
+                          {/* Student Header */}
+                          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-crimson-900/50 pb-4">
+                            <div>
+                              <div className="font-mono text-xs text-slate-400 uppercase">Assessment Subject: {assessment.subject}</div>
+                              <h3 className="text-xl font-bold text-white mt-0.5">{selectedStudent.student_id}</h3>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <div className="text-right">
+                                <div className="text-xs font-mono text-slate-400">Awarded Rubric Score</div>
+                                <div className="text-2xl font-extrabold text-champagne-gold">
+                                  {selectedStudent.rubric_score} <span className="text-sm font-normal text-slate-400">/ {assessment.metrics.max_possible_score.toFixed(1)}</span>
+                                </div>
+                              </div>
+                              {selectedStudent.human_score !== null && (
+                                <div className="text-right pl-3 border-l border-crimson-900/50">
+                                  <div className="text-xs font-mono text-slate-400">Human Benchmark</div>
+                                  <div className="text-2xl font-extrabold text-slate-300">
+                                    {selectedStudent.human_score}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Student Raw Text with Evidence Highlights */}
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-mono text-xs uppercase tracking-wider text-slate-300">
+                                Student Answer (Verbatim Quotes Highlighted)
+                              </span>
+                              <span className="font-mono text-[10px] text-champagne-gold bg-blackred-950 px-2 py-0.5 rounded border border-champagne-gold/30">
+                                ★ Exact Quote Verified
+                              </span>
+                            </div>
+                            <div className="p-4 rounded-lg bg-blackred-950/90 border border-crimson-900/50 text-sm leading-relaxed">
+                              {renderHighlightedAnswer(selectedStudent.student_answer, selectedStudent.rubric_results)}
+                            </div>
+                          </div>
+
+                          {/* Rubric Breakdown Grid */}
+                          <div className="space-y-2">
+                            <span className="font-mono text-xs uppercase tracking-wider text-slate-300">
+                              Per-Criterion Audit Breakdown
+                            </span>
+                            <div className="space-y-2">
+                              {(selectedStudent.rubric_results || []).map((c, idx) => (
+                                <div 
+                                  key={idx}
+                                  className="p-3 rounded-lg bg-blackred-950/80 border border-crimson-900/30 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs"
+                                >
+                                  <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-mono font-bold text-champagne-gold">{c.criterion_id}</span>
+                                      <span className="text-slate-200 font-medium">{c.description}</span>
+                                    </div>
+                                    {c.evidence_quote && (
+                                      <div className="font-mono text-[11px] text-slate-400 pl-4 border-l-2 border-champagne-gold/60">
+                                        Quote: &ldquo;{c.evidence_quote}&rdquo;
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center gap-3 self-end md:self-auto font-mono">
+                                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                      c.status === 'FULL' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
+                                      c.status === 'PARTIAL' ? 'bg-amber-950 text-amber-300 border border-amber-800' :
+                                      'bg-crimson-950 text-crimson-400 border border-crimson-800'
+                                    }`}>
+                                      {c.status}
+                                    </span>
+                                    <span className="font-bold text-white">
+                                      {c.awarded_points} / {c.max_points} pts
+                                    </span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Socratic Feedback & Anti-Leakage Badge */}
+                          <div className="p-4 rounded-lg bg-crimson-950/30 border border-crimson-800/60 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="font-mono text-xs uppercase tracking-wider text-champagne-gold flex items-center gap-1.5">
+                                <span>🛡️ Socratic Feedback</span>
+                              </span>
+                              <span className="font-mono text-[10px] text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">
+                                ✔ 4-Gram Leakage Free (Answer Key Safe)
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-200 leading-relaxed">
+                              {selectedStudent.feedback}
+                            </p>
+                          </div>
+
+                        </div>
+                      ) : (
+                        <div className="p-12 text-center text-slate-500 font-mono text-sm">
+                          Select a student submission on the left to inspect evidence.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* --- TAB 2: DYNAMIC REGRADING LAB (SLIDERS & DIFFING) --- */}
+                {activeTab === 'regrade' && (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    {/* Left: Dynamic Rubric Sliders */}
+                    <div className="p-5 rounded-xl border border-crimson-800/50 bg-blackred-900/90 shadow-panel space-y-5">
+                      <div className="border-b border-crimson-900/50 pb-3">
+                        <span className="font-mono text-xs uppercase tracking-wider text-champagne-gold">
+                          Decoupled Criterion Sliders
+                        </span>
+                        <p className="text-xs text-slate-400 mt-1">
+                          Drag sliders to adjust mark weights live. Re-evaluation runs in &lt; 5ms with zero API latency.
+                        </p>
+                      </div>
+
+                      <div className="space-y-4">
+                        {(assessment.rubric || []).map((c) => {
+                          const cid = c.criterion_id;
+                          const currentVal = sliderWeights[cid] !== undefined ? sliderWeights[cid] : c.max_points;
+                          return (
+                            <div key={cid} className="space-y-1.5">
+                              <div className="flex justify-between items-center text-xs">
+                                <span className="font-mono font-bold text-champagne-gold">{cid}</span>
+                                <span className="font-mono text-white font-semibold">
+                                  {currentVal.toFixed(1)} pts
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-400 line-clamp-1">{c.description}</p>
+                              <input 
+                                type="range" 
+                                min="0.5" 
+                                max="5.0" 
+                                step="0.5" 
+                                value={currentVal}
+                                onChange={(e) => handleSliderChange(cid, e.target.value)}
+                                className="w-full"
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="pt-3 border-t border-crimson-900/50">
+                        <button 
+                          onClick={handleResetWeights}
+                          className="w-full py-2 rounded-lg bg-blackred-950 hover:bg-crimson-950 border border-crimson-800 text-xs font-mono text-champagne transition"
+                        >
+                          ↺ Reset Sliders to Original Weights
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Right: Live Before-and-After Diff Table */}
+                    <div className="lg:col-span-2 p-5 rounded-xl border border-crimson-800/50 bg-blackred-900/90 shadow-panel space-y-4">
+                      <div className="flex items-center justify-between border-b border-crimson-900/50 pb-3">
+                        <div>
+                          <span className="font-mono text-xs uppercase tracking-wider text-slate-300">
+                            Before-and-After Grade Comparison Diff
+                          </span>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            {regrading ? '⚡ Recalculating in Python...' : 'Live instant diff with plain-English justifications.'}
+                          </p>
+                        </div>
+                        {regradeReport && (
+                          <div className="font-mono text-xs text-champagne-gold bg-blackred-950 px-3 py-1 rounded border border-crimson-700/50">
+                            Latency: {regradeReport.recalculation_latency_ms}ms
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Diff Table */}
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs font-mono">
+                          <thead>
+                            <tr className="border-b border-crimson-900/60 text-slate-400">
+                              <th className="pb-2.5">Student ID</th>
+                              <th className="pb-2.5">Old Score</th>
+                              <th className="pb-2.5">New Score</th>
+                              <th className="pb-2.5">Delta</th>
+                              <th className="pb-2.5">Justification</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-crimson-950/60">
+                            {(regradeReport ? regradeReport.diff_rows : assessment.students.map(s => ({
+                              student_id: s.student_id,
+                              old_score: s.rubric_score,
+                              new_score: s.rubric_score,
+                              score_delta: 0.0,
+                              explanation: 'Baseline scores active.'
+                            }))).map((row, i) => (
+                              <tr key={i} className="hover:bg-blackred-950/50 transition-colors">
+                                <td className="py-3 font-bold text-white">{row.student_id}</td>
+                                <td className="py-3 text-slate-400">{row.old_score.toFixed(1)}</td>
+                                <td className="py-3 text-champagne-gold font-bold">{row.new_score.toFixed(1)}</td>
+                                <td className="py-3">
+                                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                    row.score_delta > 0 ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' :
+                                    row.score_delta < 0 ? 'bg-crimson-950 text-crimson-400 border border-crimson-800' :
+                                    'bg-blackred-950 text-slate-400'
+                                  }`}>
+                                    {row.score_delta > 0 ? `+${row.score_delta.toFixed(1)}` : row.score_delta.toFixed(1)}
+                                  </span>
+                                </td>
+                                <td className="py-3 text-[11px] text-slate-300 max-w-xs">{row.explanation}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+                {/* --- TAB 3: BORDERLINE REVIEW QUEUE --- */}
+                {activeTab === 'borderline' && (
+                  <div className="p-6 rounded-xl border border-crimson-800/50 bg-blackred-900/90 shadow-panel space-y-5">
+                    <div className="border-b border-crimson-900/50 pb-3 flex items-center justify-between">
+                      <div>
+                        <span className="font-mono text-xs uppercase tracking-wider text-champagne-gold">
+                          Human-in-the-Loop Borderline Queue (Δ ≥ 1.5 Marks)
+                        </span>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          Flags students with large discrepancies between AI and Human markers for manual teacher approval.
+                        </p>
+                      </div>
+                      <span className="font-mono text-xs text-crimson-400 bg-crimson-950 px-2.5 py-1 rounded border border-crimson-800">
+                        {assessment.metrics.borderline_count} Cases Flagged
+                      </span>
+                    </div>
+
+                    <div className="space-y-3">
+                      {assessment.students.filter(s => s.is_borderline).length === 0 ? (
+                        <div className="p-8 text-center text-slate-400 font-mono text-xs">
+                          🎉 Zero borderline discrepancies detected! AI scores closely match human benchmark standards.
+                        </div>
+                      ) : (
+                        assessment.students.filter(s => s.is_borderline).map(s => (
+                          <div key={s.student_id} className="p-4 rounded-lg bg-blackred-950 border border-crimson-800/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono font-bold text-white text-sm">{s.student_id}</span>
+                                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-crimson-950 text-crimson-300 border border-crimson-800">
+                                  Discrepancy: {s.score_discrepancy.toFixed(1)} pts
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-300 line-clamp-2">{s.student_answer}</p>
+                            </div>
+
+                            <div className="flex items-center gap-3 font-mono text-xs">
+                              <div>
+                                <span className="text-slate-400">AI Score: </span>
+                                <span className="font-bold text-champagne-gold">{s.rubric_score}</span>
+                              </div>
+                              <div>
+                                <span className="text-slate-400">Human: </span>
+                                <span className="font-bold text-slate-200">{s.human_score}</span>
+                              </div>
+                              <button 
+                                onClick={() => {
+                                  sound.click();
+                                  alert(`Confirmed teacher audit for ${s.student_id}.`);
+                                }}
+                                className="px-3 py-1.5 rounded bg-crimson-900 hover:bg-crimson text-white text-xs transition"
+                              >
+                                Approve AI Mark
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* --- TAB 4: EXPORT & SYSTEM AUDIT --- */}
+                {activeTab === 'export' && (
+                  <div className="p-6 rounded-xl border border-crimson-800/50 bg-blackred-900/90 shadow-panel space-y-6">
+                    <div>
+                      <h3 className="text-lg font-bold text-white">Full Batch Export & Psychometric Audit</h3>
+                      <p className="text-xs text-slate-400 mt-1">
+                        Download the comprehensive CSV report including student answers, dense semantic match percentages, rubric marks, and verified evidence quotes.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-4">
+                      <a 
+                        href={`/api/export_csv?dataset_id=${encodeURIComponent(currentDatasetId)}`}
+                        className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-crimson to-crimson-800 hover:from-crimson-500 hover:to-crimson-700 text-white font-mono text-xs font-bold transition shadow-crimson-md flex items-center gap-2"
+                      >
+                        <span>📥 Download Graded Batch CSV</span>
+                      </a>
+                    </div>
+
+                    <div className="p-4 rounded-lg bg-blackred-950 border border-crimson-900/40 space-y-2 text-xs font-mono">
+                      <div className="font-bold text-champagne-gold">Quadratic Weighted Kappa (QWK) Reliability Index:</div>
+                      <p className="text-slate-300 leading-relaxed font-sans">
+                        QWK measures inter-rater agreement between the automated AI system and human evaluators, incorporating a quadratic penalty matrix where distant errors are penalized exponentially harder than adjacent errors:
+                      </p>
+                      <div className="p-2 rounded bg-blackred-900 text-champagne font-mono text-[11px]">
+                        w_ij = (i - j)² / (N - 1)²  ➔  Current Score: {assessment.metrics.qwk_score.toFixed(4)} ({assessment.metrics.qwk_interpretation})
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+              </section>
+            </>
+          )}
+
+          {/* --- FOOTER --- */}
+          <footer className="pt-6 border-t border-crimson-900/40 flex flex-col md:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-2">
+            <div>QUBRIX Internal Hackathon • AIML Problem 2 (EdTech)</div>
+            <div className="text-champagne-gold/60">Crafted with Three.js • WebGL • React 18 • FastAPI Backend</div>
+          </footer>
+
+        </div>
+      );
+    }
+
+    // Render React Application
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

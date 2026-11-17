@@ -74,5 +74,23 @@ class TestDataLoader(unittest.TestCase):
         self.assertGreater(len(rubric), 0)
 
 
+    def test_load_custom_csv_with_aliases(self):
+        """Test loading a CSV that uses 'rubric' instead of 'rubric_json' and lacks 'subject'."""
+        csv_data = (
+            'student_id,question,model_answer,rubric,student_answer,human_score\n'
+            'STU001,"What is AI?","Artificial Intelligence is simulation of human intelligence.",'
+            '"[{""id"": ""C1"", ""description"": ""Defines AI"", ""max_marks"": 2.0}]",'
+            '"AI simulates human reasoning.",2.0\n'
+        )
+        df = self.loader.load_csv(io.StringIO(csv_data))
+        self.assertIn("rubric_json", df.columns)
+        self.assertIn("subject", df.columns)
+        self.assertEqual(len(df), 1)
+
+        rubric = self.loader.parse_rubric(df["rubric_json"].iloc[0])
+        self.assertEqual(rubric[0]["criterion_id"], "C1")
+        self.assertEqual(rubric[0]["max_points"], 2.0)
+
+
 if __name__ == "__main__":
     unittest.main()

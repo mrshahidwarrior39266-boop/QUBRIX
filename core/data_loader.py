@@ -66,6 +66,47 @@ class DataLoader:
         # Strip whitespace from column names for robust matching
         df.columns = [col.strip().lower() for col in df.columns]
 
+        # Alias resolution for flexible, friendly CSV imports
+        column_aliases = {
+            "rubric": "rubric_json",
+            "rubrics": "rubric_json",
+            "criteria": "rubric_json",
+            "rubric_criteria": "rubric_json",
+            "id": "student_id",
+            "studentid": "student_id",
+            "student": "student_id",
+            "roll_no": "student_id",
+            "roll_number": "student_id",
+            "student_name": "student_id",
+            "answer": "student_answer",
+            "response": "student_answer",
+            "student_response": "student_answer",
+            "submission": "student_answer",
+            "ideal_answer": "model_answer",
+            "reference_answer": "model_answer",
+            "expected_answer": "model_answer",
+            "ground_truth": "model_answer",
+            "prompt": "question",
+            "question_text": "question",
+            "problem": "question",
+            "score": "human_score",
+            "marks": "human_score",
+            "human_marks": "human_score",
+            "grade": "human_score",
+        }
+        for alias, standard in column_aliases.items():
+            if alias in df.columns and standard not in df.columns:
+                df = df.rename(columns={alias: standard})
+
+        # If subject column is missing, auto-populate from question or assign default
+        if "subject" not in df.columns:
+            if "question" in df.columns:
+                df["subject"] = df["question"].apply(
+                    lambda q: (str(q)[:45].strip() + "...") if len(str(q)) > 45 else (str(q).strip() or "General")
+                )
+            else:
+                df["subject"] = "General"
+
         # Check for mandatory columns
         missing_cols = [col for col in REQUIRED_COLUMNS if col not in df.columns]
         if missing_cols:
@@ -127,12 +168,13 @@ class DataLoader:
             if not isinstance(item, dict):
                 raise ValueError(f"Rubric item #{idx + 1} is not a valid dictionary object.")
 
-            cid = str(item.get("criterion_id", f"C{idx + 1}")).strip()
+            cid = str(item.get("criterion_id") or item.get("id") or f"C{idx + 1}").strip()
             desc = str(item.get("description", "")).strip()
             
-            # Extract point weight, defaulting to 1.0 if unspecified
+            # Extract point weight (supports both 'max_points' and 'max_marks'), defaulting to 1.0
+            raw_pts = item.get("max_points") if "max_points" in item else item.get("max_marks", 1.0)
             try:
-                points = float(item.get("max_points", 1.0))
+                points = float(raw_pts)
             except (ValueError, TypeError):
                 points = 1.0
 

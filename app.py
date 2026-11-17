@@ -117,7 +117,13 @@ with st.sidebar:
     st.subheader("1. Select Dataset")
     subject_choice = st.selectbox(
         "Choose academic subject",
-        ["Biology (Cellular Respiration)", "Computer Science (Recursion vs Iteration)", "History (Industrial Revolution)", "📁 Upload Custom CSV"]
+        [
+            "Biology (Cellular Respiration)",
+            "Computer Science (Recursion vs Iteration)",
+            "History (Industrial Revolution)",
+            "🌟 Custom Assessment (ML, Mitochondria, Binary Search)",
+            "📁 Upload Custom CSV"
+        ]
     )
 
     df_raw = None
@@ -130,14 +136,23 @@ with st.sidebar:
     elif subject_choice == "History (Industrial Revolution)":
         df_raw = loader.load_csv("data/sample_history.csv")
         active_subject = "History"
+    elif subject_choice == "🌟 Custom Assessment (ML, Mitochondria, Binary Search)":
+        df_full = loader.load_csv("data/sample_custom_ml.csv")
+        subjects = loader.get_available_subjects(df_full)
+        active_subject = st.selectbox("Select question/topic from dataset", subjects)
+        df_raw = loader.filter_by_subject(df_full, active_subject)
     else:
         uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
         if uploaded_file:
             try:
-                df_raw = loader.load_csv(uploaded_file)
-                subjects = loader.get_available_subjects(df_raw)
-                active_subject = st.selectbox("Select subject from file", subjects) if subjects else "Default"
-                df_raw = loader.filter_by_subject(df_raw, active_subject) if subjects else df_raw
+                df_loaded = loader.load_csv(uploaded_file)
+                subjects = loader.get_available_subjects(df_loaded)
+                if subjects and len(subjects) > 1:
+                    active_subject = st.selectbox("Select question/topic from file", subjects)
+                    df_raw = loader.filter_by_subject(df_loaded, active_subject)
+                else:
+                    active_subject = subjects[0] if subjects else "Custom Assessment"
+                    df_raw = df_loaded
             except Exception as e:
                 st.error(f"Error loading CSV: {e}")
                 st.stop()

@@ -51,6 +51,13 @@ class DataLoader:
         Raises:
             ValueError: If required columns are missing or if the CSV is empty.
         """
+        # Rewind buffer if stream is seekable (prevents Streamlit re-run EOF errors)
+        if hasattr(file_source, "seek"):
+            try:
+                file_source.seek(0)
+            except Exception:
+                pass
+
         # Try UTF-8 first, fallback to latin-1 if Windows encoded
         try:
             df = pd.read_csv(file_source, encoding="utf-8")
@@ -101,9 +108,15 @@ class DataLoader:
         # If subject column is missing, auto-populate from question or assign default
         if "subject" not in df.columns:
             if "question" in df.columns:
-                df["subject"] = df["question"].apply(
-                    lambda q: (str(q)[:45].strip() + "...") if len(str(q)) > 45 else (str(q).strip() or "General")
-                )
+                unique_questions = df["question"].unique()
+                if len(unique_questions) == 1:
+                    df["subject"] = "Custom Assessment"
+                else:
+                    q_map = {
+                        q: f"Question {i+1}: {str(q)[:40].strip()}..."
+                        for i, q in enumerate(unique_questions)
+                    }
+                    df["subject"] = df["question"].map(q_map)
             else:
                 df["subject"] = "General"
 

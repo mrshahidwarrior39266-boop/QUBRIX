@@ -115,7 +115,8 @@ class CacheManager:
         sample_files = [
             os.path.join("data", "sample_biology.csv"),
             os.path.join("data", "sample_cs.csv"),
-            os.path.join("data", "sample_history.csv")
+            os.path.join("data", "sample_history.csv"),
+            os.path.join("data", "sample_custom_ml.csv")
         ]
 
         for path in sample_files:

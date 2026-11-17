@@ -31,6 +31,8 @@ Welcome to the project learning log! This document records key concepts, archite
 | `data/sample_history.csv` | History benchmark testing humanities reasoning | Domain syllabus | Raw tabular data |
 | `core/data_loader.py` | The gatekeeper: loads CSVs, checks required columns, and parses rubrics | Raw CSV file or buffer | Clean Pandas DataFrame & rubric dicts |
 | `core/similarity_engine.py` | Vector calculator: computes conceptual similarity against model answer | Student & model text | 0–100% semantic match score |
+| `core/rubric_evaluator.py` | Rubric reasoner: assigns FULL/PARTIAL/NONE, awards marks, and verifies verbatim quotes | Question, Model Answer, Rubric, Student Answer | Structured evaluation dictionary with verified quotes |
+| `core/feedback_engine.py` | Teacher mentor: synthesizes constructive feedback while protecting answer keys | Rubric evaluation results, Model Answer | Socratic student feedback & leakage audit flag |
 
 ---
 
@@ -41,3 +43,6 @@ Welcome to the project learning log! This document records key concepts, archite
 
 * **Why decoupled rubric weights instead of re-prompting the AI?**
   If a teacher changes a rubric slider from 2 marks to 3 marks, asking the AI to grade the whole class again takes 30 seconds and might change previously awarded points randomly. By caching the AI's qualitative decision (`FULL`, `PARTIAL`, `NONE`) and doing the math in Python, re-grading takes under 5 milliseconds with 100% mathematical precision!
+
+* **Why automated 4-gram leakage checking for feedback?**
+  A major failure mode of AI graders is accidentally revealing the model answer to the student (e.g. "You should have said: [exact model answer text]"). Our 4-gram overlap detector mathematically scans the generated feedback against the instructor's reference text. If 4 or more identical words appear in a row, the text is flagged and sanitized into a socratic conceptual hint!

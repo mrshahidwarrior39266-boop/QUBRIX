@@ -7,7 +7,7 @@ A focused 4-phase execution roadmap designed for the QUBRIX 12-hour hackathon. W
 ## Phases
 
 - [x] **Phase 1: Ingestion Pipeline & Local Semantic Similarity** - CSV parsing across multiple subjects and dense vector embedding cosine similarity against model answers.
-- [ ] **Phase 2: Rubric Reasoner, Evidence Extractor & Non-Leaking Feedback** - Structured JSON evaluation of rubric criteria, verbatim quote extraction with substring guards, and socratic feedback synthesis.
+- [x] **Phase 2: Rubric Reasoner, Evidence Extractor & Non-Leaking Feedback** - Structured JSON evaluation of rubric criteria, verbatim quote extraction with substring guards, and socratic feedback synthesis.
 - [ ] **Phase 3: Reliability Analysis & Dynamic Regrading Engine** - Quadratic Weighted Kappa calculation, borderline teacher triage, and sub-10ms decoupled rubric re-weighting with before/after diffing.
 - [ ] **Phase 4: Streamlit Interactive Dashboard & Demo Polish** - Full UI with multi-subject tabs, inline `<mark>` evidence highlighting, dynamic sliders, CSV report export, and offline cache safety.
 
@@ -42,8 +42,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01: Implement structured LLM evaluation and verbatim quote validator in `core/rubric_evaluator.py`.
-- [ ] 02-02: Implement socratic feedback synthesizer with negative-leakage guardrails in `core/feedback_engine.py`.
+- [x] 02-01: Implement structured LLM evaluation and verbatim quote validator in `core/rubric_evaluator.py`.
+- [x] 02-02: Implement socratic feedback synthesizer with negative-leakage guardrails in `core/feedback_engine.py`.
 
 ---
 
@@ -89,6 +89,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |---|---|---|---|
 | 1. Ingestion Pipeline & Semantic Vector Engine | 2/2 | Complete | 2026-11-17 |
-| 2. Rubric Reasoner & Evidence Extractor | 0/2 | Not started | - |
+| 2. Rubric Reasoner & Evidence Extractor | 2/2 | Complete | 2026-11-17 |
 | 3. Reliability Analysis & Dynamic Regrading Engine | 0/2 | Not started | - |
 | 4. Streamlit Interactive Dashboard & Demo Polish | 0/2 | Not started | - |

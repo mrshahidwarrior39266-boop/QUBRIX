@@ -173,10 +173,19 @@ class SemanticSimilarityEngine:
         """
         enriched_df = df.copy()
 
-        similarities = []
-        for _, row in enriched_df.iterrows():
-            sim = self.compute_similarity(str(row["student_answer"]), str(row["model_answer"]))
-            similarities.append(sim)
+        # Batch-encode when the whole batch shares one model answer (the common case):
+        # dense encoding is far faster in one pass than row-by-row.
+        unique_models = enriched_df["model_answer"].astype(str).unique() if "model_answer" in enriched_df.columns else []
+        if len(enriched_df) > 0 and len(unique_models) == 1:
+            model_answer = str(unique_models[0])
+            similarities = self.batch_compute_similarity(
+                [str(a) for a in enriched_df["student_answer"]], model_answer
+            )
+        else:
+            similarities = []
+            for _, row in enriched_df.iterrows():
+                sim = self.compute_similarity(str(row["student_answer"]), str(row["model_answer"]))
+                similarities.append(sim)
 
         enriched_df["semantic_similarity"] = similarities
         enriched_df["semantic_score_pct"] = [self.get_match_percentage(s) for s in similarities]

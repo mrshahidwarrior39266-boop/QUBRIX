@@ -129,7 +129,6 @@ with st.sidebar:
             "Biology (Cellular Respiration)",
             "Computer Science (Recursion vs Iteration)",
             "History (Industrial Revolution)",
-            "🌟 Custom Assessment (ML, Mitochondria, Binary Search)",
             "📁 Upload Custom CSV"
         ]
     )
@@ -144,11 +143,6 @@ with st.sidebar:
     elif subject_choice == "History (Industrial Revolution)":
         df_raw = loader.load_csv("data/sample_history.csv")
         active_subject = "History"
-    elif subject_choice == "🌟 Custom Assessment (ML, Mitochondria, Binary Search)":
-        df_full = loader.load_csv("data/sample_custom_ml.csv")
-        subjects = loader.get_available_subjects(df_full)
-        active_subject = st.selectbox("Select question/topic from dataset", subjects)
-        df_raw = loader.filter_by_subject(df_full, active_subject)
     else:
         uploaded_file = st.file_uploader("Upload CSV file", type=["csv"])
         if uploaded_file:

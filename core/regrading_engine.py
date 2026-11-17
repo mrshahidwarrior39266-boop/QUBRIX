@@ -119,6 +119,7 @@ class RegradingEngine:
         """
         shifts = []
         orig_map = {c["criterion_id"]: c for c in orig_evals}
+        weights_changed = False
 
         for new_c in new_evals:
             cid = new_c["criterion_id"]
@@ -130,13 +131,17 @@ class RegradingEngine:
 
                 old_w = old_c.get("max_points", 1.0)
                 new_w = new_c.get("max_points", 1.0)
+                if abs(float(old_w) - float(new_w)) > 1e-9:
+                    weights_changed = True
 
                 if diff != 0:
                     sign = "+" if diff > 0 else ""
                     shifts.append(f"{cid} ({sign}{diff} pts, weight {old_w}→{new_w})")
 
         if not shifts:
-            return "Score unchanged (proportions identical or unweighted criteria)."
+            if weights_changed:
+                return "Score unchanged — the revised weights do not affect this student's awarded criteria."
+            return "Score unchanged — rubric weights match the original standard."
 
         return "Adjusted by: " + "; ".join(shifts)
 

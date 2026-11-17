@@ -14,6 +14,7 @@ Welcome to the project learning log! This document records key concepts, archite
 | **Verbatim Evidence** | An exact, character-accurate quote copied directly from the student's text proving they fulfilled a criterion. | Like highlighting the quote in a courtroom document to prove a fact. |
 | **Quadratic Weighted Kappa (QWK)** | A statistical score (-1.0 to +1.0) measuring agreement between two raters, heavily penalizing large score discrepancies. | If Teacher A gives 5/5 and Teacher B gives 1/5, QWK rings a loud alarm bell. |
 | **Decoupled Scoring Engine** | Separating qualitative judgment (Did they answer this? Full/Part/None) from arithmetic (Multiplying points by weights). | Like separating the judge's verdict (guilty/innocent) from the sentencing calculator. Allows instant recalculation without re-trying the case! |
+| **Confidence Score** | A 0–100 honesty signal reduced by unverified quotes, weak semantic alignment and large AI–human gaps; low confidence and big gaps enter the review queue. | Like a weather forecast's "chance of rain": useful, but it tells you when to double-check before going out. |
 
 ---
 
@@ -37,7 +38,9 @@ Welcome to the project learning log! This document records key concepts, archite
 | `core/regrading_engine.py` | Instant recalculator: re-weights criteria and computes score diffs | Evaluation states, new slider weights | Regraded scores, delta diff table, and updated QWK in <10ms |
 | `core/visualizer.py` | Evidence highlighter: styles cited quotes with color-coded `<mark>` tags | Student text, Criterion evaluations | Sanitized, styled HTML ready for web display |
 | `core/cache_manager.py` | Demo safety guardian: persists evaluations to disk and exports CSVs | Evaluations, batch DataFrames | `data/cache/evaluations.json` & downloadable CSV bytes |
-| `app.py` | Executive control center: the unified Streamlit web application | User interactions, datasets, sliders | Full visual interactive experience for judges |
+| `app.py` | Optional Streamlit research dashboard with grading, regrading and reliability tabs | User interactions, datasets, sliders | Secondary visual dashboard |
+| `backend_api.py` | The primary app: FastAPI routes for datasets, assessment, regrade, upload and export, plus confidence scoring and baseline caching | HTTP requests | JSON payloads, CSV downloads, `web/index.html` |
+| `web/index.html` | Premium single-page grading dashboard (React via CDN, no build step) | API responses | Assessment library, submissions, live regrade, review queue, export |
 
 ---
 

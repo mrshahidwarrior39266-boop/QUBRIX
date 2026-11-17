@@ -38,9 +38,13 @@ class CacheManager:
         if dirname and not os.path.exists(dirname):
             os.makedirs(dirname, exist_ok=True)
 
-    def _compute_key(self, student_answer: str, rubric_str: str) -> str:
-        """Generate SHA-256 fingerprint for student answer + rubric pair."""
-        content = f"{student_answer.strip()}|||{rubric_str.strip()}".encode("utf-8")
+    def _compute_key(self, student_answer: str, rubric_str: str, context: str = "") -> str:
+        """Generate SHA-256 fingerprint for the (answer, rubric, question context) triple.
+
+        Including the question/model-answer context prevents two different assessments
+        that happen to share an answer string and rubric from reusing each other's marks.
+        """
+        content = f"{student_answer.strip()}|||{rubric_str.strip()}|||{context.strip()}".encode("utf-8")
         return hashlib.sha256(content).hexdigest()
 
     def _load_cache(self) -> Dict[str, Any]:
@@ -62,14 +66,14 @@ class CacheManager:
         except Exception as e:
             logger.warning(f"Failed to write cache file: {e}")
 
-    def get_cached_evaluation(self, student_answer: str, rubric_str: str) -> Optional[Dict[str, Any]]:
+    def get_cached_evaluation(self, student_answer: str, rubric_str: str, context: str = "") -> Optional[Dict[str, Any]]:
         """Retrieve cached evaluation if available."""
-        key = self._compute_key(student_answer, rubric_str)
+        key = self._compute_key(student_answer, rubric_str, context)
         return self.cache_data.get(key)
 
-    def save_evaluation(self, student_answer: str, rubric_str: str, payload: Dict[str, Any]):
+    def save_evaluation(self, student_answer: str, rubric_str: str, payload: Dict[str, Any], context: str = ""):
         """Store evaluation in cache and persist to disk."""
-        key = self._compute_key(student_answer, rubric_str)
+        key = self._compute_key(student_answer, rubric_str, context)
         self.cache_data[key] = payload
         self._save_to_disk()
 
@@ -115,8 +119,7 @@ class CacheManager:
         sample_files = [
             os.path.join("data", "sample_biology.csv"),
             os.path.join("data", "sample_cs.csv"),
-            os.path.join("data", "sample_history.csv"),
-            os.path.join("data", "sample_custom_ml.csv")
+            os.path.join("data", "sample_history.csv")
         ]
 
         for path in sample_files:

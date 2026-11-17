@@ -70,6 +70,18 @@ def calculate_qwk(
     preds = np.array([p[1] for p in clean_pairs])
     n = len(trues)
 
+    # Kappa is undefined for a single rated submission: report it honestly rather than
+    # claiming perfect agreement from one data point.
+    if n < 2:
+        return {
+            "qwk_score": 0.0,
+            "interpretation": "Insufficient Data",
+            "sample_size": n,
+            "mean_absolute_error": round(float(np.mean(np.abs(trues - preds))), 2),
+            "exact_agreement_pct": round(float(np.mean(np.abs(trues - preds) < 0.25) * 100.0), 1),
+            "adjacent_agreement_pct": round(float(np.mean(np.abs(trues - preds) <= 1.0) * 100.0), 1)
+        }
+
     # Discretize continuous floats to ordinal integer rating categories
     # e.g., for bin_step=1.0: round to nearest integer and clip between min_rating and max_rating
     discretized_true = np.clip(np.round(trues / bin_step), min_rating / bin_step, max_rating / bin_step).astype(int)

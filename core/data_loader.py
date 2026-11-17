@@ -58,14 +58,18 @@ class DataLoader:
             except Exception:
                 pass
 
-        # Try UTF-8 first, fallback to latin-1 if Windows encoded
-        try:
-            df = pd.read_csv(file_source, encoding="utf-8")
-        except UnicodeDecodeError:
-            logger.warning("UTF-8 decoding failed; falling back to latin-1 encoding.")
-            if hasattr(file_source, "seek"):
-                file_source.seek(0)
-            df = pd.read_csv(file_source, encoding="latin-1")
+        # Try UTF-8 (with BOM handling for Excel exports), then plain UTF-8, then latin-1.
+        df = None
+        for encoding in ("utf-8-sig", "utf-8", "latin-1"):
+            try:
+                df = pd.read_csv(file_source, encoding=encoding)
+                break
+            except UnicodeDecodeError:
+                logger.warning(f"{encoding} decoding failed; trying next encoding.")
+                if hasattr(file_source, "seek"):
+                    file_source.seek(0)
+        if df is None:
+            raise ValueError("Could not decode the CSV file. Please save it as UTF-8 and retry.")
 
         if df.empty:
             raise ValueError("The provided CSV file contains no data.")

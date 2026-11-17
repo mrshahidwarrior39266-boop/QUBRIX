@@ -8,7 +8,7 @@ A focused 4-phase execution roadmap designed for the QUBRIX 12-hour hackathon. W
 
 - [x] **Phase 1: Ingestion Pipeline & Local Semantic Similarity** - CSV parsing across multiple subjects and dense vector embedding cosine similarity against model answers.
 - [x] **Phase 2: Rubric Reasoner, Evidence Extractor & Non-Leaking Feedback** - Structured JSON evaluation of rubric criteria, verbatim quote extraction with substring guards, and socratic feedback synthesis.
-- [ ] **Phase 3: Reliability Analysis & Dynamic Regrading Engine** - Quadratic Weighted Kappa calculation, borderline teacher triage, and sub-10ms decoupled rubric re-weighting with before/after diffing.
+- [x] **Phase 3: Reliability Analysis & Dynamic Regrading Engine** - Quadratic Weighted Kappa calculation, borderline teacher triage, and sub-10ms decoupled rubric re-weighting with before/after diffing.
 - [ ] **Phase 4: Streamlit Interactive Dashboard & Demo Polish** - Full UI with multi-subject tabs, inline `<mark>` evidence highlighting, dynamic sliders, CSV report export, and offline cache safety.
 
 ---
@@ -58,8 +58,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Build QWK metrics calculator and borderline triage auditor in `core/metrics.py`.
-- [ ] 03-02: Build decoupled deterministic re-grading and before/after score diff engine in `core/regrading_engine.py`.
+- [x] 03-01: Build QWK metrics calculator and borderline triage auditor in `core/metrics.py`.
+- [x] 03-02: Build decoupled deterministic re-grading and before/after score diff engine in `core/regrading_engine.py`.
 
 ---
 
@@ -90,5 +90,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |---|---|---|---|
 | 1. Ingestion Pipeline & Semantic Vector Engine | 2/2 | Complete | 2026-11-17 |
 | 2. Rubric Reasoner & Evidence Extractor | 2/2 | Complete | 2026-11-17 |
-| 3. Reliability Analysis & Dynamic Regrading Engine | 0/2 | Not started | - |
+| 3. Reliability Analysis & Dynamic Regrading Engine | 2/2 | Complete | 2026-11-17 |
 | 4. Streamlit Interactive Dashboard & Demo Polish | 0/2 | Not started | - |

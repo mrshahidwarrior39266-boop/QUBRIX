@@ -481,8 +481,9 @@
         const parts = raw.split('/');
         const aliases = { evaluations: 'submissions', borderline: 'review' };
         const rawTab = aliases[parts[1]] || parts[1];
+        const dsSlug = (parts[0] && parts[0] !== 'landing' && parts[0] !== 'studio') ? decodeURIComponent(parts[0]) : null;
         return {
-          dataset: parts[0] ? decodeURIComponent(parts[0]) : null,
+          dataset: dsSlug,
           tab: TABS.some(t => t.id === rawTab) ? rawTab : null
         };
       };
@@ -520,9 +521,10 @@
       const [removingCustom, setRemovingCustom] = useState(false);
 
       const handleGetStarted = (datasetId = null) => {
-        if (datasetId) setActiveDatasetId(datasetId);
+        const targetId = datasetId || activeDatasetId || 'biology';
+        setActiveDatasetId(targetId);
         setPageView('studio');
-        window.location.hash = '#studio';
+        window.location.hash = `#${encodeURIComponent(targetId)}/submissions`;
       };
 
       const handleRemoveCustom = async () => {
@@ -543,6 +545,26 @@
           setRemovingCustom(false);
         }
       };
+
+      useEffect(() => {
+        const onHashChange = () => {
+          const hash = (window.location.hash || '').toLowerCase();
+          if (hash.includes('landing') || !hash) {
+            setPageView('landing');
+          } else {
+            setPageView('studio');
+            const route = readRoute();
+            if (route.dataset && route.dataset !== activeDatasetId) {
+              setActiveDatasetId(route.dataset);
+            }
+            if (route.tab && route.tab !== activeTab) {
+              setActiveTab(route.tab);
+            }
+          }
+        };
+        window.addEventListener('hashchange', onHashChange);
+        return () => window.removeEventListener('hashchange', onHashChange);
+      }, [activeDatasetId, activeTab]);
 
       const regradeSeq = useRef(0);
       const debounceRef = useRef(null);
@@ -1034,11 +1056,6 @@
                           ✕
                         </span>
                       )}
-                    </button>
-                  );
-                })}
-              </div>
-                      {cohortLabel(ds)}
                     </button>
                   );
                 })}

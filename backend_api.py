@@ -523,6 +523,18 @@ async def upload_csv(file: UploadFile = File(...)):
     }
 
 
+@app.delete("/api/custom_dataset")
+@app.post("/api/custom_dataset/clear")
+def clear_custom_dataset():
+    global custom_uploaded_df, custom_uploaded_name, CACHE_GENERATION
+    custom_uploaded_df = None
+    custom_uploaded_name = None
+    CACHE_GENERATION += 1
+    with CACHE_LOCK:
+        BASELINE_CACHE.clear()
+    return {"success": True, "message": "Custom dataset removed."}
+
+
 def _parse_weights_param(weights: Optional[str], rubric: List[Dict[str, Any]]) -> Dict[str, float]:
     if not weights:
         return _sanitize_weights({}, rubric)

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RubricGrader AI • Next-Gen Explainable Assessment</title>
+  <title>RubricGrader AI • Explainable Assessment & Dynamic Regrading</title>
   
   <!-- Premium Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,14 +19,14 @@
         extend: {
           colors: {
             // 60% Black-Red obsidian velvet & dark void
-            void: '#040102',
+            void: '#050102',
             obsidian: {
               950: '#070203',
               900: '#0c0406',
-              850: '#110508',
-              800: '#17070b',
-              700: '#230a11',
-              600: '#320f18',
+              850: '#120508',
+              800: '#18070b',
+              700: '#220910',
+              600: '#2f0c16',
             },
             // 30% Rich Crimson Red & Glowing Neon Accents
             crimson: {
@@ -58,8 +58,8 @@
           boxShadow: {
             'glow-crimson': '0 0 35px -5px rgba(230, 25, 60, 0.45)',
             'glow-champagne': '0 0 25px -3px rgba(245, 215, 127, 0.4)',
-            'glass-card': '0 12px 40px 0 rgba(0, 0, 0, 0.65), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1)',
-            'glass-card-hover': '0 20px 50px 0 rgba(230, 25, 60, 0.25), inset 0 1px 1px 0 rgba(245, 215, 127, 0.2)',
+            'glass-panel': '0 16px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
+            'glass-card': '0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(230, 25, 60, 0.15)',
           }
         }
       }
@@ -75,23 +75,21 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
-    /* Ultra-sleek Cyber-Studio Stylesheet */
     * {
       box-sizing: border-box;
-      border-color: rgba(230, 25, 60, 0.15);
     }
 
     body {
-      background-color: #040102;
-      color: #F1F0ED;
+      background-color: #050102;
+      color: #E2E1DE;
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 50% -15%, rgba(230, 25, 60, 0.22) 0%, transparent 65%),
-        radial-gradient(circle at 85% 60%, rgba(125, 12, 30, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 0%, rgba(230, 25, 60, 0.18) 0%, transparent 55%),
+        radial-gradient(circle at 100% 50%, rgba(125, 12, 30, 0.12) 0%, transparent 40%),
         linear-gradient(rgba(230, 25, 60, 0.02) 1px, transparent 1px),
         linear-gradient(90deg, rgba(230, 25, 60, 0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+      background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
     }
 
     /* Custom Scrollbar */
@@ -111,27 +109,27 @@
       box-shadow: 0 0 10px #E6193C;
     }
 
-    /* Glowing Evidence Quotes */
-    .evidence-pill {
-      background: linear-gradient(135deg, rgba(245, 215, 127, 0.2) 0%, rgba(230, 25, 60, 0.15) 100%);
-      border: 1px solid rgba(245, 215, 127, 0.45);
+    /* Verbatim Evidence Highlighter Pill */
+    .evidence-tag {
+      background: linear-gradient(135deg, rgba(245, 215, 127, 0.18) 0%, rgba(230, 25, 60, 0.12) 100%);
+      border: 1px solid rgba(245, 215, 127, 0.5);
       color: #FFFDF8;
-      padding: 2px 7px;
-      border-radius: 5px;
+      padding: 2px 6px;
+      border-radius: 4px;
       font-weight: 500;
-      box-shadow: 0 0 14px rgba(245, 215, 127, 0.3);
+      box-shadow: 0 0 12px rgba(245, 215, 127, 0.25);
       display: inline;
       transition: all 0.2s ease;
     }
-    .evidence-pill:hover {
-      background: linear-gradient(135deg, rgba(245, 215, 127, 0.35) 0%, rgba(230, 25, 60, 0.25) 100%);
-      box-shadow: 0 0 20px rgba(245, 215, 127, 0.5);
+    .evidence-tag:hover {
+      background: linear-gradient(135deg, rgba(245, 215, 127, 0.3) 0%, rgba(230, 25, 60, 0.2) 100%);
+      box-shadow: 0 0 18px rgba(245, 215, 127, 0.45);
     }
 
-    /* Luxury Slider Thumb */
+    /* Range Slider */
     input[type=range] {
       -webkit-appearance: none;
-      background: #17070b;
+      background: #18070b;
       border: 1px solid rgba(230, 25, 60, 0.3);
       height: 6px;
       border-radius: 4px;
@@ -146,35 +144,34 @@
       box-shadow: 0 0 14px #F5D77F, 0 0 6px #E6193C;
       cursor: pointer;
       border: 2px solid #E6193C;
-      transition: all 0.15s ease-in-out;
+      transition: transform 0.15s ease-in-out;
     }
     input[type=range]::-webkit-slider-thumb:hover {
       transform: scale(1.25);
-      box-shadow: 0 0 22px #FFDF73, 0 0 10px #FF1E4B;
+      box-shadow: 0 0 20px #FFDF73, 0 0 10px #FF1E4B;
     }
 
-    /* Shimmer Animation */
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    .text-shimmer {
-      background: linear-gradient(90deg, #FFFFFF 0%, #F5D77F 45%, #E6193C 70%, #FFFFFF 100%);
-      background-size: 200% auto;
-      color: transparent;
+    /* Gradient Text Utilities */
+    .grad-crimson-gold {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F5D77F 40%, #E6193C 85%);
       -webkit-background-clip: text;
-      animation: shimmer 5s linear infinite;
+      -webkit-text-fill-color: transparent;
+    }
+    .grad-gold-white {
+      background: linear-gradient(135deg, #FFF9EE 0%, #F5D77F 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   </style>
 </head>
-<body class="min-h-screen text-slate-100 antialiased selection:bg-crimson selection:text-white">
+<body class="min-h-screen text-slate-100 antialiased">
   <div id="root"></div>
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
 
-    // --- ZERO-DEPENDENCY PROCEDURAL AUDIO SYNTHESIZER ---
-    class StudioAudio {
+    // --- PROCEDURAL WEB AUDIO SYNTHESIZER ---
+    class CyberAudio {
       constructor() {
         this.ctx = null;
         this.enabled = true;
@@ -186,7 +183,7 @@
         }
         if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
       }
-      play(freq, dur = 0.08, type = 'sine', vol = 0.07) {
+      play(freq, dur = 0.08, type = 'sine', vol = 0.06) {
         if (!this.enabled) return;
         this.init();
         if (!this.ctx) return;
@@ -203,14 +200,14 @@
           osc.stop(this.ctx.currentTime + dur);
         } catch (e) {}
       }
-      click() { this.play(700, 0.03, 'sine', 0.05); }
+      click() { this.play(800, 0.02, 'sine', 0.04); }
       tab() {
-        this.play(523.25, 0.06, 'triangle', 0.06);
-        setTimeout(() => this.play(659.25, 0.08, 'sine', 0.06), 40);
+        this.play(520, 0.05, 'triangle', 0.05);
+        setTimeout(() => this.play(680, 0.06, 'sine', 0.05), 35);
       }
       regrade() {
-        [440, 554.37, 659.25, 880].forEach((f, i) => {
-          setTimeout(() => this.play(f, 0.16, 'sine', 0.06), i * 35);
+        [440, 554, 659, 880].forEach((f, i) => {
+          setTimeout(() => this.play(f, 0.14, 'sine', 0.05), i * 30);
         });
       }
       toggle() {
@@ -218,10 +215,10 @@
         return this.enabled;
       }
     }
-    const audio = new StudioAudio();
+    const audio = new CyberAudio();
 
-    // --- 3D THREE.JS HOLOGRAPHIC EVALUATION CORE ---
-    function HolographicHero() {
+    // --- THREE.JS INTERACTIVE HOLOGRAPHIC SCENE ---
+    function HolographicCore() {
       const mountRef = useRef(null);
 
       useEffect(() => {
@@ -233,94 +230,93 @@
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        camera.position.set(0, 0, 24);
+        camera.position.set(0, 0, 20);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(width, height);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        // Ambient & Spot Lights
-        scene.add(new THREE.AmbientLight(0x230a11, 1.5));
+        // Lighting
+        scene.add(new THREE.AmbientLight(0x220910, 1.8));
 
-        const redLight = new THREE.PointLight(0xE6193C, 50, 70);
-        redLight.position.set(12, 10, 10);
-        scene.add(redLight);
+        const crimsonLight = new THREE.PointLight(0xE6193C, 40, 60);
+        crimsonLight.position.set(8, 8, 8);
+        scene.add(crimsonLight);
 
-        const goldLight = new THREE.PointLight(0xF5D77F, 30, 60);
-        goldLight.position.set(-12, -8, 8);
+        const goldLight = new THREE.PointLight(0xF5D77F, 30, 50);
+        goldLight.position.set(-8, -6, 6);
         scene.add(goldLight);
 
-        // Core Assembly Group
+        // Hologram Group
         const coreGroup = new THREE.Group();
         scene.add(coreGroup);
 
-        // Outer Crimson Gyro Ring
-        const ring1Geo = new THREE.TorusGeometry(6.2, 0.06, 16, 120);
-        const ring1Mat = new THREE.MeshBasicMaterial({ color: 0xE6193C, transparent: true, opacity: 0.6 });
-        const ring1 = new THREE.Mesh(ring1Geo, ring1Mat);
+        // Outer Celestial Ring (Crimson)
+        const r1Geo = new THREE.TorusGeometry(5.2, 0.06, 16, 120);
+        const r1Mat = new THREE.MeshBasicMaterial({ color: 0xE6193C, transparent: true, opacity: 0.7 });
+        const ring1 = new THREE.Mesh(r1Geo, r1Mat);
         coreGroup.add(ring1);
 
-        // Mid Champagne Gyro Ring
-        const ring2Geo = new THREE.TorusGeometry(4.8, 0.05, 16, 100);
-        const ring2Mat = new THREE.MeshBasicMaterial({ color: 0xF5D77F, transparent: true, opacity: 0.5 });
-        const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+        // Inner Celestial Ring (Champagne Gold)
+        const r2Geo = new THREE.TorusGeometry(4.0, 0.05, 16, 100);
+        const r2Mat = new THREE.MeshBasicMaterial({ color: 0xF5D77F, transparent: true, opacity: 0.6 });
+        const ring2 = new THREE.Mesh(r2Geo, r2Mat);
         ring2.rotation.x = Math.PI / 3;
         coreGroup.add(ring2);
 
-        // Center Crystalline Icosahedron
-        const icoGeo = new THREE.IcosahedronGeometry(2.8, 1);
+        // Central Crystal Icosahedron
+        const icoGeo = new THREE.IcosahedronGeometry(2.4, 1);
         const icoMat = new THREE.MeshStandardMaterial({
           color: 0xE6193C,
           wireframe: true,
           transparent: true,
-          opacity: 0.45,
+          opacity: 0.5,
           emissive: 0x5a0815,
-          emissiveIntensity: 0.6
+          emissiveIntensity: 0.8
         });
         const icosahedron = new THREE.Mesh(icoGeo, icoMat);
         coreGroup.add(icosahedron);
 
-        // Glowing Inner Nucleus
-        const nucGeo = new THREE.SphereGeometry(1.2, 24, 24);
-        const nucMat = new THREE.MeshStandardMaterial({
+        // Glowing Core Sphere
+        const coreGeo = new THREE.SphereGeometry(1.0, 24, 24);
+        const coreMat = new THREE.MeshStandardMaterial({
           color: 0xF5D77F,
           roughness: 0.1,
-          metalness: 0.9,
+          metalness: 0.8,
           emissive: 0xF5D77F,
-          emissiveIntensity: 0.8
+          emissiveIntensity: 0.9
         });
-        const nucleus = new THREE.Mesh(nucGeo, nucMat);
-        coreGroup.add(nucleus);
+        const coreSphere = new THREE.Mesh(coreGeo, coreMat);
+        coreGroup.add(coreSphere);
 
-        // Floating Dynamic Score Columns
-        const barsGroup = new THREE.Group();
-        scene.add(barsGroup);
-        barsGroup.position.set(0, -2, -4);
+        // Floating Equalizer / Criteria Columns in Background
+        const barGroup = new THREE.Group();
+        scene.add(barGroup);
+        barGroup.position.set(0, -2, -3);
 
-        const barCount = 12;
+        const barCount = 10;
         const bars = [];
         for (let i = 0; i < barCount; i++) {
-          const barH = 1 + Math.random() * 4;
-          const barGeo = new THREE.BoxGeometry(0.35, barH, 0.35);
+          const h = 1.2 + Math.random() * 3.5;
+          const geo = new THREE.BoxGeometry(0.3, h, 0.3);
           const isGold = i % 3 === 0;
-          const barMat = new THREE.MeshStandardMaterial({
+          const mat = new THREE.MeshStandardMaterial({
             color: isGold ? 0xF5D77F : 0x7d0c1e,
             emissive: isGold ? 0xF5D77F : 0x3d050e,
             emissiveIntensity: 0.3,
-            roughness: 0.3,
-            metalness: 0.7
+            roughness: 0.3
           });
-          const bar = new THREE.Mesh(barGeo, barMat);
+          const mesh = new THREE.Mesh(geo, mat);
           const angle = (i / barCount) * Math.PI * 2;
-          const radius = 8.5;
-          bar.position.set(Math.cos(angle) * radius, barH / 2 - 3, Math.sin(angle) * radius);
-          barsGroup.add(bar);
-          bars.push({ mesh: bar, baseH: barH, speed: 1.5 + Math.random() });
+          const radius = 7.5;
+          mesh.position.set(Math.cos(angle) * radius, h / 2 - 2, Math.sin(angle) * radius);
+          barGroup.add(mesh);
+          bars.push({ mesh, baseH: h, freq: 1.2 + Math.random() });
         }
 
-        // Particle Galaxy (800 Golden & Crimson Sparks)
-        const pCount = 800;
+        // Particle Stardust Field (600 particles)
+        const pCount = 600;
         const pGeo = new THREE.BufferGeometry();
         const pPos = new Float32Array(pCount * 3);
         const pCol = new Float32Array(pCount * 3);
@@ -328,11 +324,11 @@
         const cGold = new THREE.Color(0xF5D77F);
 
         for (let i = 0; i < pCount; i++) {
-          const rad = 10 + Math.random() * 18;
+          const rad = 8 + Math.random() * 16;
           const th = Math.random() * Math.PI * 2;
           const ph = Math.acos(2 * Math.random() - 1);
           pPos[i * 3] = rad * Math.sin(ph) * Math.cos(th);
-          pPos[i * 3 + 1] = (Math.random() - 0.5) * 14;
+          pPos[i * 3 + 1] = (Math.random() - 0.5) * 12;
           pPos[i * 3 + 2] = rad * Math.sin(ph) * Math.sin(th);
 
           const c = Math.random() > 0.4 ? cRed : cGold;
@@ -343,11 +339,11 @@
 
         pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
         pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
-        const pMat = new THREE.PointsMaterial({ size: 0.16, vertexColors: true, transparent: true, opacity: 0.75 });
+        const pMat = new THREE.PointsMaterial({ size: 0.15, vertexColors: true, transparent: true, opacity: 0.75 });
         const particles = new THREE.Points(pGeo, pMat);
         scene.add(particles);
 
-        // Mouse Interactivity
+        // Mouse Parallax
         let mouseX = 0, mouseY = 0;
         const onMouseMove = (e) => {
           mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -355,34 +351,35 @@
         };
         window.addEventListener('mousemove', onMouseMove);
 
-        // Render Loop
+        // Animation Loop
         let animId;
         const clock = new THREE.Clock();
-        const render = () => {
-          animId = requestAnimationFrame(render);
+        const animate = () => {
+          animId = requestAnimationFrame(animate);
           const t = clock.getElapsedTime();
 
-          ring1.rotation.z = t * 0.2;
-          ring1.rotation.y = t * 0.15;
-          ring2.rotation.x = t * 0.25;
-          icosahedron.rotation.y = t * 0.3;
-          icosahedron.rotation.x = t * 0.15;
-          nucleus.scale.setScalar(1 + Math.sin(t * 2.5) * 0.08);
+          ring1.rotation.z = t * 0.18;
+          ring1.rotation.y = t * 0.14;
+          ring2.rotation.x = t * 0.22;
+          icosahedron.rotation.y = t * 0.25;
+          icosahedron.rotation.x = t * 0.12;
+
+          coreSphere.scale.setScalar(1 + Math.sin(t * 2.5) * 0.08);
 
           bars.forEach((b, idx) => {
-            const h = b.baseH + Math.sin(t * b.speed + idx) * 1.5;
+            const h = b.baseH + Math.sin(t * b.freq + idx) * 1.2;
             b.mesh.scale.y = Math.max(0.2, h / b.baseH);
           });
 
-          particles.rotation.y = t * 0.03;
+          particles.rotation.y = t * 0.025;
 
-          camera.position.x += (mouseX * 4 - camera.position.x) * 0.04;
-          camera.position.y += (-mouseY * 3 - camera.position.y) * 0.04;
+          camera.position.x += (mouseX * 3 - camera.position.x) * 0.04;
+          camera.position.y += (-mouseY * 2.5 - camera.position.y) * 0.04;
           camera.lookAt(0, 0, 0);
 
           renderer.render(scene, camera);
         };
-        render();
+        animate();
 
         const onResize = () => {
           if (!container) return;
@@ -402,46 +399,22 @@
       }, []);
 
       return (
-        <div className="relative w-full h-[320px] md:h-[400px] rounded-3xl overflow-hidden border border-crimson-800/30 bg-obsidian-950/60 shadow-glass-card backdrop-blur-xl">
+        <div className="relative w-full h-[320px] md:h-[420px] flex items-center justify-center">
           <div ref={mountRef} className="absolute inset-0 cursor-crosshair"></div>
           
-          {/* Top telemetry tags */}
-          <div className="absolute top-5 left-6 z-10 flex items-center gap-3">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-crimson opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-crimson-neon"></span>
-            </span>
-            <span className="font-mono text-xs uppercase tracking-widest text-champagne-gold font-semibold">
-              Explainable Neural Engine • 60 FPS WebGL
-            </span>
+          {/* Subtle floating telemetry pill */}
+          <div className="absolute top-4 right-4 z-10 font-mono text-[11px] text-slate-400 bg-obsidian-900/80 px-3 py-1 rounded-full border border-crimson-900/40 backdrop-blur-md">
+            <span>60 FPS • THREE.JS WEBGL CORE</span>
           </div>
 
-          <div className="absolute top-5 right-6 z-10 hidden sm:flex items-center gap-2 font-mono text-[11px] text-slate-400 bg-obsidian-900/80 px-3 py-1 rounded-full border border-crimson-900/40">
-            <span>AUDITABLE CRITERIA ANCHORING</span>
-          </div>
-
-          {/* Hero Headline Overlay */}
-          <div className="absolute bottom-6 left-6 md:left-8 z-10 max-w-xl pointer-events-none">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-950/60 border border-crimson-700/40 text-xs font-mono text-champagne-gold mb-2">
-              <span>★ QUBRIX HACKATHON AIML-2</span>
-            </div>
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white leading-none">
-              <span className="text-shimmer">RubricGrader</span> <span className="text-crimson-neon">AI</span>
-            </h1>
-            <p className="text-xs md:text-sm text-slate-300 mt-2 font-medium leading-relaxed max-w-md">
-              Instant sub-10ms decoupled regrading. Every grade backed by verbatim highlighted student evidence with 4-gram anti-leakage protection.
-            </p>
-          </div>
-
-          <div className="absolute bottom-6 right-6 z-10 hidden md:block text-right pointer-events-none font-mono text-xs text-slate-400">
-            <div>3D Interactive Hologram</div>
-            <div className="text-[11px] text-champagne-gold/70">Move cursor to orbit</div>
+          <div className="absolute bottom-4 right-4 z-10 font-mono text-[10px] text-champagne-gold/70">
+            <span>Drag cursor to orbit ➔</span>
           </div>
         </div>
       );
     }
 
-    // --- MAIN STUDIO APPLICATION ---
+    // --- MAIN REACT APPLICATION ---
     function App() {
       const [datasets, setDatasets] = useState([]);
       const [activeDatasetId, setActiveDatasetId] = useState('biology');
@@ -456,15 +429,15 @@
       const [soundOn, setSoundOn] = useState(true);
       const [uploading, setUploading] = useState(false);
 
-      // Fetch Datasets
+      // Load Datasets
       useEffect(() => {
         fetch('/api/datasets')
           .then(r => r.json())
           .then(d => setDatasets(d.datasets || []))
-          .catch(e => setError('Failed to reach API server. Ensure backend_api.py is running.'));
+          .catch(e => setError('Failed to reach backend API. Ensure backend_api.py is running on port 8000.'));
       }, []);
 
-      // Fetch Active Assessment
+      // Load Active Assessment
       useEffect(() => {
         setLoading(true);
         setError(null);
@@ -489,7 +462,7 @@
           });
       }, [activeDatasetId]);
 
-      // Regrade API Call
+      // Regrade Trigger
       const runRegrade = (weights) => {
         fetch('/api/regrade', {
           method: 'POST',
@@ -577,7 +550,7 @@
         return (
           <span>
             {parts.map((p, i) => p.isMatch ? (
-              <span key={i} className="evidence-pill">{p.text}</span>
+              <span key={i} className="evidence-tag">{p.text}</span>
             ) : (
               <span key={i}>{p.text}</span>
             ))}
@@ -586,27 +559,27 @@
       };
 
       return (
-        <div className="max-w-7xl mx-auto px-4 py-6 md:px-8 space-y-6">
+        <div className="max-w-7xl mx-auto px-4 py-8 md:px-8 space-y-8">
           
-          {/* --- TOP BRAND & TELEMETRY NAV --- */}
-          <nav className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-card backdrop-blur-xl">
+          {/* --- TOP FLOATING NAVBAR --- */}
+          <nav className="flex items-center justify-between px-6 py-4 rounded-2xl border border-crimson-900/30 bg-obsidian-900/70 shadow-glass-panel backdrop-blur-xl">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-crimson-neon via-crimson-600 to-crimson-900 flex items-center justify-center shadow-glow-crimson border border-crimson-400/40">
-                <span className="font-mono font-black text-champagne-light text-base tracking-tighter">RG</span>
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-crimson-neon to-crimson-800 flex items-center justify-center shadow-glow-crimson border border-crimson-400/40">
+                <span className="font-mono font-black text-champagne text-sm">RG</span>
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-white text-base tracking-tight">RubricGrader AI</span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-crimson-950 border border-crimson-800 text-champagne-gold">
-                    CYBER-STUDIO
+                    AIML-2 EDTECH
                   </span>
                 </div>
-                <div className="text-xs text-slate-400 font-medium">Explainable Academic Assessment & Dynamic Regrading</div>
+                <div className="text-[11px] text-slate-400">Explainable Evaluation & Decoupled Regrading</div>
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-              <div className="px-3 py-1 rounded-full bg-obsidian-950 border border-crimson-900/50 flex items-center gap-2 text-slate-300">
+            <div className="flex items-center gap-3 font-mono text-xs">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-obsidian-950 border border-crimson-900/50 text-slate-300">
                 <span className="w-2 h-2 rounded-full bg-champagne-gold animate-pulse"></span>
                 <span>SPEED:</span>
                 <span className="text-champagne-gold font-bold">
@@ -614,8 +587,8 @@
                 </span>
               </div>
 
-              <div className="px-3 py-1 rounded-full bg-obsidian-950 border border-crimson-900/50 flex items-center gap-2 text-slate-300">
-                <span className="text-emerald-400 font-bold">✔ 4-Gram Guardrail</span>
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-obsidian-950 border border-crimson-900/50 text-emerald-400">
+                <span>✔ 4-Gram Guardrail</span>
               </div>
 
               {/* Sound Synthesizer Switch */}
@@ -638,19 +611,60 @@
                 href="http://localhost:8501" 
                 target="_blank" 
                 rel="noreferrer"
-                className="px-3 py-1 rounded-full bg-obsidian-950 hover:bg-crimson-950 border border-crimson-800 text-slate-300 hover:text-white transition"
+                className="px-3.5 py-1 rounded-full bg-obsidian-950 hover:bg-crimson-950 border border-crimson-800 text-slate-300 hover:text-white transition"
               >
                 Streamlit :8501 ➔
               </a>
             </div>
           </nav>
 
-          {/* --- 3D THREE.JS WEBGL HERO --- */}
-          <HolographicHero />
+          {/* --- HERO SECTION: EDITORIAL SPLIT --- */}
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-2">
+            
+            {/* Left 7 Columns: Editorial Headline & Pitch */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-obsidian-900 border border-crimson-800/60 shadow-sm text-xs font-mono text-champagne-gold">
+                <span className="w-2 h-2 rounded-full bg-crimson-neon animate-pulse"></span>
+                <span>QUBRIX 12-HOUR INTERNAL HACKATHON</span>
+              </div>
 
-          {/* --- SUBJECT PILL SELECTOR & CUSTOM INGESTION --- */}
-          <section className="p-3 rounded-2xl border border-crimson-900/30 bg-obsidian-900/60 shadow-glass-card backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.08] text-white">
+                Explainable AI <br />
+                <span className="grad-crimson-gold">Short-Answer</span> <br />
+                <span className="text-slate-200">Evaluation Engine</span>
+              </h1>
+
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-xl font-normal">
+                Eliminate subjective scoring and hours of painful regrading. Every mark is anchored to <strong className="text-champagne-gold font-semibold">character-accurate verbatim student quotes</strong> with <strong className="text-white font-semibold">sub-10ms decoupled dynamic regrading</strong> and zero model answer leakage.
+              </p>
+
+              {/* Quick Hero Telemetry Row */}
+              <div className="grid grid-cols-3 gap-3 max-w-lg pt-2">
+                <div className="p-3 rounded-xl bg-obsidian-900/60 border border-crimson-900/30">
+                  <div className="text-lg md:text-2xl font-extrabold text-champagne-gold">0.8062</div>
+                  <div className="text-[11px] font-mono text-slate-400 mt-0.5">QWK Agreement</div>
+                </div>
+                <div className="p-3 rounded-xl bg-obsidian-900/60 border border-crimson-900/30">
+                  <div className="text-lg md:text-2xl font-extrabold text-white">&lt; 5ms</div>
+                  <div className="text-[11px] font-mono text-crimson-400 mt-0.5">Recalculation</div>
+                </div>
+                <div className="p-3 rounded-xl bg-obsidian-900/60 border border-crimson-900/30">
+                  <div className="text-lg md:text-2xl font-extrabold text-champagne-light">100%</div>
+                  <div className="text-[11px] font-mono text-slate-400 mt-0.5">Offline Ready</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right 5 Columns: 3D Holographic Core */}
+            <div className="lg:col-span-5 rounded-3xl border border-crimson-900/40 bg-obsidian-900/50 shadow-glass-panel backdrop-blur-xl overflow-hidden p-2">
+              <HolographicCore />
+            </div>
+
+          </section>
+
+          {/* --- SUBJECT PILL BAR & INGESTION --- */}
+          <section className="p-3 rounded-2xl border border-crimson-900/30 bg-obsidian-900/70 shadow-glass-panel backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
               <span className="text-xs font-mono uppercase tracking-wider text-slate-400 px-3 hidden lg:inline">
                 Assessment Stream:
               </span>
@@ -663,10 +677,10 @@
                       audio.tab();
                       setActiveDatasetId(ds.id);
                     }}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-tight transition-all flex items-center gap-2 ${
+                    className={`px-4 py-2.5 rounded-xl text-xs font-semibold tracking-tight transition-all flex items-center gap-2 ${
                       isActive 
-                        ? 'bg-gradient-to-r from-crimson to-crimson-700 text-white shadow-glow-crimson border border-crimson-400' 
-                        : 'bg-obsidian-950/70 hover:bg-obsidian-800 text-slate-300 hover:text-white border border-crimson-900/30'
+                        ? 'bg-gradient-to-r from-crimson to-crimson-800 text-white shadow-glow-crimson border border-crimson-400/50' 
+                        : 'bg-obsidian-950/80 hover:bg-obsidian-800 text-slate-300 hover:text-white border border-crimson-900/30'
                     }`}
                   >
                     <span>{ds.name}</span>
@@ -675,7 +689,7 @@
               })}
             </div>
 
-            <label className="cursor-pointer px-4 py-2 rounded-xl bg-obsidian-950 hover:bg-crimson-950 border border-crimson-800/60 text-xs font-mono text-champagne-gold transition flex items-center gap-2 shrink-0">
+            <label className="cursor-pointer px-4 py-2.5 rounded-xl bg-obsidian-950 hover:bg-crimson-950 border border-crimson-800/60 text-xs font-mono text-champagne-gold transition flex items-center gap-2 shrink-0">
               <span>{uploading ? '⏳ Ingesting CSV...' : '📁 Ingest Custom CSV'}</span>
               <input 
                 type="file" 
@@ -705,12 +719,12 @@
           {!loading && assessment && (
             <>
               {/* --- QUESTION & MODEL ANSWER HUD CARD --- */}
-              <section className="p-5 rounded-2xl border border-crimson-900/40 bg-obsidian-900/70 shadow-glass-card backdrop-blur-xl space-y-4">
-                <div className="flex items-center justify-between border-b border-crimson-900/40 pb-3">
+              <section className="p-6 rounded-2xl border border-crimson-900/30 bg-obsidian-900/70 shadow-glass-panel backdrop-blur-xl space-y-4">
+                <div className="flex items-center justify-between border-b border-crimson-900/30 pb-3">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-champagne-gold"></span>
                     <span className="font-mono text-xs uppercase tracking-wider text-slate-300 font-semibold">
-                      Subject: {assessment.subject}
+                      Subject Assessment: {assessment.subject}
                     </span>
                   </div>
                   <span className="font-mono text-xs text-champagne-gold bg-obsidian-950 px-3 py-1 rounded-full border border-champagne-border">
@@ -719,9 +733,9 @@
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
-                  <div className="p-4 rounded-xl bg-obsidian-950/80 border border-crimson-900/40">
+                  <div className="p-4 rounded-xl bg-obsidian-950/80 border border-crimson-900/30">
                     <div className="font-mono text-[11px] text-slate-400 uppercase tracking-wider mb-1 font-semibold">
-                      Assessment Question
+                      Target Question Prompt
                     </div>
                     <p className="text-white font-medium leading-relaxed">
                       {assessment.question}
@@ -730,18 +744,18 @@
 
                   <div className="p-4 rounded-xl bg-obsidian-950/80 border border-champagne-gold/25">
                     <div className="font-mono text-[11px] text-champagne-gold uppercase tracking-wider mb-1 font-semibold">
-                      Canonical Model Answer Key
+                      Instructor Canonical Reference Answer
                     </div>
-                    <p className="text-slate-200 leading-relaxed">
+                    <p className="text-slate-200 leading-relaxed font-normal">
                       {assessment.model_answer}
                     </p>
                   </div>
                 </div>
               </section>
 
-              {/* --- EXECUTIVE KPI CARDS --- */}
+              {/* --- 4-CARD EXECUTIVE KPI ROW --- */}
               <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-card">
+                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-panel">
                   <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Submissions</div>
                   <div className="text-3xl md:text-4xl font-extrabold text-white mt-1">
                     {assessment.metrics.total_submissions}
@@ -749,7 +763,7 @@
                   <div className="text-[11px] font-mono text-emerald-400 mt-1">100% Ingested & Verified</div>
                 </div>
 
-                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-card">
+                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-panel">
                   <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Semantic Match</div>
                   <div className="text-3xl md:text-4xl font-extrabold text-champagne-gold mt-1">
                     {assessment.metrics.avg_semantic_match}%
@@ -757,7 +771,7 @@
                   <div className="text-[11px] font-mono text-slate-400 mt-1">Dense Vector Cosine Sim</div>
                 </div>
 
-                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-card">
+                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-panel">
                   <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Avg Rubric Score</div>
                   <div className="text-3xl md:text-4xl font-extrabold text-white mt-1">
                     {regradeReport ? regradeReport.new_avg_score : assessment.metrics.avg_rubric_score}
@@ -766,12 +780,12 @@
                     </span>
                   </div>
                   <div className="text-[11px] font-mono text-crimson-400 mt-1">
-                    {regradeReport ? '⚡ Recalculated (<5ms)' : 'Baseline Evaluated'}
+                    {regradeReport ? '⚡ Dynamic Recalculated' : 'Baseline Evaluated'}
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-card">
-                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Human QWK Agreement</div>
+                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-panel">
+                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Human Agreement (QWK)</div>
                   <div className="text-3xl md:text-4xl font-extrabold text-champagne-gold mt-1">
                     {regradeReport && regradeReport.new_qwk ? regradeReport.new_qwk.qwk_score.toFixed(3) : assessment.metrics.qwk_score.toFixed(3)}
                   </div>
@@ -783,7 +797,7 @@
 
               {/* --- WORKSPACE TABS --- */}
               <section className="space-y-4">
-                <div className="flex border-b border-crimson-900/40 space-x-3">
+                <div className="flex border-b border-crimson-900/30 space-x-3">
                   <button
                     onClick={() => { audio.tab(); setActiveTab('evaluations'); }}
                     className={`pb-3 font-mono text-xs uppercase tracking-wider transition-all border-b-2 font-bold ${
@@ -837,14 +851,14 @@
 
                 {/* --- TAB 1: EVALUATIONS MASTER-DETAIL VIEW --- */}
                 {activeTab === 'evaluations' && (
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                     
                     {/* Left: Student Submission Cards */}
                     <div className="lg:col-span-5 space-y-3">
                       <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">
                         Submission Roster
                       </div>
-                      <div className="space-y-2.5 max-h-[680px] overflow-y-auto pr-1">
+                      <div className="space-y-3 max-h-[700px] overflow-y-auto pr-1">
                         {assessment.students.map((student) => {
                           const isSel = selectedStudent && selectedStudent.student_id === student.student_id;
                           return (
@@ -876,7 +890,7 @@
                                 </span>
                               </div>
 
-                              <p className="text-xs text-slate-300 line-clamp-2 mt-2 leading-relaxed">
+                              <p className="text-xs text-slate-300 line-clamp-2 mt-2 leading-relaxed font-normal">
                                 {student.student_answer}
                               </p>
 
@@ -893,10 +907,10 @@
                     {/* Right: Detailed Evidence & Audit Desk */}
                     <div className="lg:col-span-7 space-y-4">
                       {selectedStudent ? (
-                        <div className="p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-card space-y-5">
+                        <div className="p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-panel space-y-5">
                           
                           {/* Student Desk Header */}
-                          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-crimson-900/40 pb-4">
+                          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-crimson-900/30 pb-4">
                             <div>
                               <div className="font-mono text-xs text-slate-400 uppercase">Assessment Candidate</div>
                               <h2 className="text-2xl font-extrabold text-white mt-0.5">{selectedStudent.student_id}</h2>
@@ -912,7 +926,7 @@
                               </div>
 
                               {selectedStudent.human_score !== null && (
-                                <div className="text-right pl-4 border-l border-crimson-900/40">
+                                <div className="text-right pl-4 border-l border-crimson-900/30">
                                   <div className="text-xs font-mono text-slate-400">Human Standard</div>
                                   <div className="text-3xl font-extrabold text-slate-300">
                                     {selectedStudent.human_score}
@@ -942,7 +956,7 @@
                             <span className="font-mono text-xs uppercase tracking-wider text-slate-300 font-semibold">
                               Rubric Criteria Audit Breakdown
                             </span>
-                            <div className="space-y-2">
+                            <div className="space-y-2.5">
                               {(selectedStudent.rubric_results || []).map((c, i) => (
                                 <div key={i} className="p-3.5 rounded-xl bg-obsidian-950/80 border border-crimson-900/30 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
                                   <div className="space-y-1">
@@ -975,7 +989,7 @@
                           </div>
 
                           {/* Socratic Feedback Box */}
-                          <div className="p-4 rounded-xl bg-crimson-950/30 border border-crimson-800/50 space-y-2">
+                          <div className="p-4 rounded-xl bg-crimson-950/30 border border-crimson-800/40 space-y-2">
                             <div className="flex items-center justify-between">
                               <span className="font-mono text-xs uppercase tracking-wider text-champagne-gold font-bold">
                                 🛡️ Constructive Student Feedback
@@ -1001,10 +1015,10 @@
 
                 {/* --- TAB 2: DYNAMIC REGRADING LAB --- */}
                 {activeTab === 'regrade' && (
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                     
                     {/* Left: Dynamic Rubric Weight Sliders */}
-                    <div className="lg:col-span-5 p-5 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-card space-y-5">
+                    <div className="lg:col-span-5 p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-panel space-y-5">
                       <div className="border-b border-crimson-900/40 pb-3">
                         <span className="font-mono text-xs uppercase tracking-wider text-champagne-gold font-bold">
                           Decoupled Criterion Sliders
@@ -1050,7 +1064,7 @@
                     </div>
 
                     {/* Right: Real-time Before/After Diff Table */}
-                    <div className="lg:col-span-7 p-5 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-card space-y-4">
+                    <div className="lg:col-span-7 p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-panel space-y-4">
                       <div className="flex items-center justify-between border-b border-crimson-900/40 pb-3">
                         <div>
                           <span className="font-mono text-xs uppercase tracking-wider text-slate-300 font-bold">
@@ -1112,7 +1126,7 @@
 
                 {/* --- TAB 3: BORDERLINE QUEUE --- */}
                 {activeTab === 'borderline' && (
-                  <div className="p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-card space-y-5">
+                  <div className="p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-panel space-y-5">
                     <div className="border-b border-crimson-900/40 pb-3 flex items-center justify-between">
                       <div>
                         <span className="font-mono text-xs uppercase tracking-wider text-champagne-gold font-bold">
@@ -1173,7 +1187,7 @@
 
                 {/* --- TAB 4: EXPORT & AUDIT --- */}
                 {activeTab === 'export' && (
-                  <div className="p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-card space-y-6">
+                  <div className="p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-panel space-y-6">
                     <div>
                       <h3 className="text-lg font-bold text-white">Full Batch Export & Psychometric Audit</h3>
                       <p className="text-xs text-slate-400 mt-1">

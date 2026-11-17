@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RubricGrader AI • Explainable Assessment & Dynamic Regrading</title>
+  <title>RubricGrader • Explainable Academic Evaluation Engine</title>
   
   <!-- Premium Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,8 +85,8 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(230, 25, 60, 0.18) 0%, transparent 55%),
-        radial-gradient(circle at 100% 50%, rgba(125, 12, 30, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 50% 0%, rgba(230, 25, 60, 0.16) 0%, transparent 55%),
+        radial-gradient(circle at 100% 50%, rgba(125, 12, 30, 0.10) 0%, transparent 40%),
         linear-gradient(rgba(230, 25, 60, 0.02) 1px, transparent 1px),
         linear-gradient(90deg, rgba(230, 25, 60, 0.02) 1px, transparent 1px);
       background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
@@ -109,21 +109,21 @@
       box-shadow: 0 0 10px #E6193C;
     }
 
-    /* Verbatim Evidence Highlighter Pill */
+    /* Verbatim Evidence Highlighter Tag */
     .evidence-tag {
-      background: linear-gradient(135deg, rgba(245, 215, 127, 0.18) 0%, rgba(230, 25, 60, 0.12) 100%);
-      border: 1px solid rgba(245, 215, 127, 0.5);
+      background: linear-gradient(135deg, rgba(245, 215, 127, 0.22) 0%, rgba(230, 25, 60, 0.14) 100%);
+      border: 1px solid rgba(245, 215, 127, 0.55);
       color: #FFFDF8;
-      padding: 2px 6px;
+      padding: 2px 7px;
       border-radius: 4px;
       font-weight: 500;
-      box-shadow: 0 0 12px rgba(245, 215, 127, 0.25);
+      box-shadow: 0 0 14px rgba(245, 215, 127, 0.28);
       display: inline;
       transition: all 0.2s ease;
     }
     .evidence-tag:hover {
-      background: linear-gradient(135deg, rgba(245, 215, 127, 0.3) 0%, rgba(230, 25, 60, 0.2) 100%);
-      box-shadow: 0 0 18px rgba(245, 215, 127, 0.45);
+      background: linear-gradient(135deg, rgba(245, 215, 127, 0.35) 0%, rgba(230, 25, 60, 0.22) 100%);
+      box-shadow: 0 0 20px rgba(245, 215, 127, 0.5);
     }
 
     /* Range Slider */
@@ -153,12 +153,7 @@
 
     /* Gradient Text Utilities */
     .grad-crimson-gold {
-      background: linear-gradient(135deg, #FFFFFF 0%, #F5D77F 40%, #E6193C 85%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .grad-gold-white {
-      background: linear-gradient(135deg, #FFF9EE 0%, #F5D77F 100%);
+      background: linear-gradient(135deg, #FFFFFF 0%, #F5D77F 45%, #E6193C 90%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -183,7 +178,7 @@
         }
         if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
       }
-      play(freq, dur = 0.08, type = 'sine', vol = 0.06) {
+      play(freq, dur = 0.08, type = 'sine', vol = 0.05) {
         if (!this.enabled) return;
         this.init();
         if (!this.ctx) return;
@@ -200,14 +195,14 @@
           osc.stop(this.ctx.currentTime + dur);
         } catch (e) {}
       }
-      click() { this.play(800, 0.02, 'sine', 0.04); }
+      click() { this.play(750, 0.025, 'sine', 0.04); }
       tab() {
-        this.play(520, 0.05, 'triangle', 0.05);
-        setTimeout(() => this.play(680, 0.06, 'sine', 0.05), 35);
+        this.play(500, 0.04, 'sine', 0.04);
+        setTimeout(() => this.play(680, 0.05, 'sine', 0.04), 30);
       }
       regrade() {
         [440, 554, 659, 880].forEach((f, i) => {
-          setTimeout(() => this.play(f, 0.14, 'sine', 0.05), i * 30);
+          setTimeout(() => this.play(f, 0.12, 'sine', 0.04), i * 25);
         });
       }
       toggle() {
@@ -217,8 +212,8 @@
     }
     const audio = new CyberAudio();
 
-    // --- THREE.JS INTERACTIVE HOLOGRAPHIC SCENE ---
-    function HolographicCore() {
+    // --- THREE.JS 3D SEMANTIC EMBEDDING SPACE VISUALIZER ---
+    function SemanticSpaceVisualizer({ students, selectedStudentId, onSelectStudent }) {
       const mountRef = useRef(null);
 
       useEffect(() => {
@@ -230,7 +225,7 @@
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        camera.position.set(0, 0, 20);
+        camera.position.set(0, 2, 22);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(width, height);
@@ -240,83 +235,111 @@
         // Lighting
         scene.add(new THREE.AmbientLight(0x220910, 1.8));
 
-        const crimsonLight = new THREE.PointLight(0xE6193C, 40, 60);
+        const crimsonLight = new THREE.PointLight(0xE6193C, 45, 60);
         crimsonLight.position.set(8, 8, 8);
         scene.add(crimsonLight);
 
-        const goldLight = new THREE.PointLight(0xF5D77F, 30, 50);
+        const goldLight = new THREE.PointLight(0xF5D77F, 35, 50);
         goldLight.position.set(-8, -6, 6);
         scene.add(goldLight);
 
-        // Hologram Group
-        const coreGroup = new THREE.Group();
-        scene.add(coreGroup);
+        const rootGroup = new THREE.Group();
+        scene.add(rootGroup);
 
-        // Outer Celestial Ring (Crimson)
-        const r1Geo = new THREE.TorusGeometry(5.2, 0.06, 16, 120);
-        const r1Mat = new THREE.MeshBasicMaterial({ color: 0xE6193C, transparent: true, opacity: 0.7 });
-        const ring1 = new THREE.Mesh(r1Geo, r1Mat);
-        coreGroup.add(ring1);
+        // 1. Central Canonical Model Answer Node (Golden Core)
+        const coreGeo = new THREE.SphereGeometry(1.2, 32, 32);
+        const coreMat = new THREE.MeshStandardMaterial({
+          color: 0xF5D77F,
+          roughness: 0.1,
+          metalness: 0.9,
+          emissive: 0xF5D77F,
+          emissiveIntensity: 0.8
+        });
+        const coreNode = new THREE.Mesh(coreGeo, coreMat);
+        rootGroup.add(coreNode);
 
-        // Inner Celestial Ring (Champagne Gold)
-        const r2Geo = new THREE.TorusGeometry(4.0, 0.05, 16, 100);
-        const r2Mat = new THREE.MeshBasicMaterial({ color: 0xF5D77F, transparent: true, opacity: 0.6 });
-        const ring2 = new THREE.Mesh(r2Geo, r2Mat);
-        ring2.rotation.x = Math.PI / 3;
-        coreGroup.add(ring2);
-
-        // Central Crystal Icosahedron
-        const icoGeo = new THREE.IcosahedronGeometry(2.4, 1);
+        // Surrounding Geodesic Shield (Crimson wireframe)
+        const icoGeo = new THREE.IcosahedronGeometry(2.2, 1);
         const icoMat = new THREE.MeshStandardMaterial({
           color: 0xE6193C,
           wireframe: true,
           transparent: true,
-          opacity: 0.5,
+          opacity: 0.45,
           emissive: 0x5a0815,
-          emissiveIntensity: 0.8
+          emissiveIntensity: 0.6
         });
-        const icosahedron = new THREE.Mesh(icoGeo, icoMat);
-        coreGroup.add(icosahedron);
+        const icoMesh = new THREE.Mesh(icoGeo, icoMat);
+        rootGroup.add(icoMesh);
 
-        // Glowing Core Sphere
-        const coreGeo = new THREE.SphereGeometry(1.0, 24, 24);
-        const coreMat = new THREE.MeshStandardMaterial({
-          color: 0xF5D77F,
-          roughness: 0.1,
-          metalness: 0.8,
-          emissive: 0xF5D77F,
-          emissiveIntensity: 0.9
-        });
-        const coreSphere = new THREE.Mesh(coreGeo, coreMat);
-        coreGroup.add(coreSphere);
-
-        // Floating Equalizer / Criteria Columns in Background
-        const barGroup = new THREE.Group();
-        scene.add(barGroup);
-        barGroup.position.set(0, -2, -3);
-
-        const barCount = 10;
-        const bars = [];
-        for (let i = 0; i < barCount; i++) {
-          const h = 1.2 + Math.random() * 3.5;
-          const geo = new THREE.BoxGeometry(0.3, h, 0.3);
-          const isGold = i % 3 === 0;
-          const mat = new THREE.MeshStandardMaterial({
-            color: isGold ? 0xF5D77F : 0x7d0c1e,
-            emissive: isGold ? 0xF5D77F : 0x3d050e,
-            emissiveIntensity: 0.3,
-            roughness: 0.3
+        // Concentric Distance Orbits (Cosine Similarity Equators)
+        [4.5, 7.5, 10.5].forEach((radius, i) => {
+          const ringGeo = new THREE.TorusGeometry(radius, 0.03, 16, 120);
+          const ringMat = new THREE.MeshBasicMaterial({
+            color: i === 0 ? 0xF5D77F : 0xE6193C,
+            transparent: true,
+            opacity: 0.25 - i * 0.05
           });
-          const mesh = new THREE.Mesh(geo, mat);
-          const angle = (i / barCount) * Math.PI * 2;
-          const radius = 7.5;
-          mesh.position.set(Math.cos(angle) * radius, h / 2 - 2, Math.sin(angle) * radius);
-          barGroup.add(mesh);
-          bars.push({ mesh, baseH: h, freq: 1.2 + Math.random() });
-        }
+          const ring = new THREE.Mesh(ringGeo, ringMat);
+          ring.rotation.x = Math.PI / 2 + (i * 0.2);
+          ring.rotation.y = (i * 0.3);
+          rootGroup.add(ring);
+        });
 
-        // Particle Stardust Field (600 particles)
-        const pCount = 600;
+        // 2. Student Submissions Positioned by Semantic Proximity
+        const studentNodes = [];
+        const studentLines = [];
+        const candidateList = students || [
+          { student_id: 'BIO-001', semantic_similarity: 0.85 },
+          { student_id: 'BIO-002', semantic_similarity: 0.70 },
+          { student_id: 'BIO-003', semantic_similarity: 0.55 },
+          { student_id: 'BIO-004', semantic_similarity: 0.40 },
+          { student_id: 'BIO-005', semantic_similarity: 0.25 }
+        ];
+
+        candidateList.forEach((s, idx) => {
+          // Distance inversely proportional to similarity
+          const sim = s.semantic_similarity || 0.5;
+          const dist = 4.0 + (1.0 - sim) * 6.5;
+          const angle = (idx / candidateList.length) * Math.PI * 2;
+          const yOff = Math.sin(idx * 1.5) * 2.5;
+
+          const x = Math.cos(angle) * dist;
+          const z = Math.sin(angle) * dist;
+
+          const isSelected = selectedStudentId === s.student_id;
+          const nodeGeo = new THREE.SphereGeometry(isSelected ? 0.65 : 0.45, 16, 16);
+          const nodeMat = new THREE.MeshStandardMaterial({
+            color: isSelected ? 0xFFDF73 : 0xE6193C,
+            emissive: isSelected ? 0xF5D77F : 0x7d0c1e,
+            emissiveIntensity: isSelected ? 0.9 : 0.4,
+            roughness: 0.2,
+            metalness: 0.8
+          });
+          const nodeMesh = new THREE.Mesh(nodeGeo, nodeMat);
+          nodeMesh.position.set(x, yOff, z);
+          rootGroup.add(nodeMesh);
+          studentNodes.push({ mesh: nodeMesh, id: s.student_id, origPos: { x, y: yOff, z } });
+
+          // Connecting Ray to Canonical Core
+          const lineGeo = new THREE.BufferGeometry().setFromPoints([
+            new THREE.Vector3(0, 0, 0),
+            new THREE.Vector3(x, yOff, z)
+          ]);
+          const lineMat = new THREE.LineDashedMaterial({
+            color: isSelected ? 0xF5D77F : 0xE6193C,
+            transparent: true,
+            opacity: isSelected ? 0.7 : 0.25,
+            dashSize: 0.5,
+            gapSize: 0.3
+          });
+          const line = new THREE.Line(lineGeo, lineMat);
+          line.computeLineDistances();
+          rootGroup.add(line);
+          studentLines.push(line);
+        });
+
+        // 3. Stardust Particle Cloud (500 particles)
+        const pCount = 500;
         const pGeo = new THREE.BufferGeometry();
         const pPos = new Float32Array(pCount * 3);
         const pCol = new Float32Array(pCount * 3);
@@ -324,11 +347,11 @@
         const cGold = new THREE.Color(0xF5D77F);
 
         for (let i = 0; i < pCount; i++) {
-          const rad = 8 + Math.random() * 16;
+          const rad = 7 + Math.random() * 15;
           const th = Math.random() * Math.PI * 2;
           const ph = Math.acos(2 * Math.random() - 1);
           pPos[i * 3] = rad * Math.sin(ph) * Math.cos(th);
-          pPos[i * 3 + 1] = (Math.random() - 0.5) * 12;
+          pPos[i * 3 + 1] = (Math.random() - 0.5) * 10;
           pPos[i * 3 + 2] = rad * Math.sin(ph) * Math.sin(th);
 
           const c = Math.random() > 0.4 ? cRed : cGold;
@@ -339,9 +362,9 @@
 
         pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
         pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
-        const pMat = new THREE.PointsMaterial({ size: 0.15, vertexColors: true, transparent: true, opacity: 0.75 });
+        const pMat = new THREE.PointsMaterial({ size: 0.14, vertexColors: true, transparent: true, opacity: 0.7 });
         const particles = new THREE.Points(pGeo, pMat);
-        scene.add(particles);
+        rootGroup.add(particles);
 
         // Mouse Parallax
         let mouseX = 0, mouseY = 0;
@@ -351,30 +374,49 @@
         };
         window.addEventListener('mousemove', onMouseMove);
 
-        // Animation Loop
+        // Raycaster for clicking student nodes
+        const raycaster = new THREE.Raycaster();
+        const mouseVec = new THREE.Vector2();
+        const onClick = (e) => {
+          const rect = container.getBoundingClientRect();
+          mouseVec.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
+          mouseVec.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
+          raycaster.setFromCamera(mouseVec, camera);
+          const intersects = raycaster.intersectObjects(studentNodes.map(n => n.mesh));
+          if (intersects.length > 0) {
+            const hit = studentNodes.find(n => n.mesh === intersects[0].object);
+            if (hit && onSelectStudent) {
+              audio.click();
+              onSelectStudent(hit.id);
+            }
+          }
+        };
+        container.addEventListener('click', onClick);
+
+        // Render Loop
         let animId;
         const clock = new THREE.Clock();
         const animate = () => {
           animId = requestAnimationFrame(animate);
           const t = clock.getElapsedTime();
 
-          ring1.rotation.z = t * 0.18;
-          ring1.rotation.y = t * 0.14;
-          ring2.rotation.x = t * 0.22;
-          icosahedron.rotation.y = t * 0.25;
-          icosahedron.rotation.x = t * 0.12;
+          coreNode.scale.setScalar(1 + Math.sin(t * 2.5) * 0.06);
+          icoMesh.rotation.y = t * 0.2;
+          icoMesh.rotation.x = t * 0.1;
+          rootGroup.rotation.y = t * 0.035;
 
-          coreSphere.scale.setScalar(1 + Math.sin(t * 2.5) * 0.08);
-
-          bars.forEach((b, idx) => {
-            const h = b.baseH + Math.sin(t * b.freq + idx) * 1.2;
-            b.mesh.scale.y = Math.max(0.2, h / b.baseH);
+          studentNodes.forEach((node, i) => {
+            const isSel = selectedStudentId === node.id;
+            node.mesh.position.y = node.origPos.y + Math.sin(t * 2.0 + i) * 0.3;
+            if (isSel) {
+              node.mesh.scale.setScalar(1.2 + Math.sin(t * 4) * 0.15);
+            }
           });
 
-          particles.rotation.y = t * 0.025;
+          particles.rotation.y = t * 0.015;
 
-          camera.position.x += (mouseX * 3 - camera.position.x) * 0.04;
-          camera.position.y += (-mouseY * 2.5 - camera.position.y) * 0.04;
+          camera.position.x += (mouseX * 3.5 - camera.position.x) * 0.04;
+          camera.position.y += (-mouseY * 2.5 + 2 - camera.position.y) * 0.04;
           camera.lookAt(0, 0, 0);
 
           renderer.render(scene, camera);
@@ -392,23 +434,31 @@
         return () => {
           window.removeEventListener('mousemove', onMouseMove);
           window.removeEventListener('resize', onResize);
+          container.removeEventListener('click', onClick);
           cancelAnimationFrame(animId);
           if (container && renderer.domElement) container.removeChild(renderer.domElement);
           renderer.dispose();
         };
-      }, []);
+      }, [students, selectedStudentId]);
 
       return (
-        <div className="relative w-full h-[320px] md:h-[420px] flex items-center justify-center">
+        <div className="relative w-full h-[360px] md:h-[440px] flex items-center justify-center">
           <div ref={mountRef} className="absolute inset-0 cursor-crosshair"></div>
           
-          {/* Subtle floating telemetry pill */}
-          <div className="absolute top-4 right-4 z-10 font-mono text-[11px] text-slate-400 bg-obsidian-900/80 px-3 py-1 rounded-full border border-crimson-900/40 backdrop-blur-md">
-            <span>60 FPS • THREE.JS WEBGL CORE</span>
+          {/* Scientific Telemetry Overlay */}
+          <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-champagne-gold animate-pulse"></span>
+            <span className="font-mono text-[11px] text-slate-300 uppercase tracking-wider font-semibold">
+              3D Dense Vector Latent Space
+            </span>
           </div>
 
-          <div className="absolute bottom-4 right-4 z-10 font-mono text-[10px] text-champagne-gold/70">
-            <span>Drag cursor to orbit ➔</span>
+          <div className="absolute top-4 right-4 z-10 font-mono text-[10px] text-slate-400 bg-obsidian-900/90 px-3 py-1 rounded-full border border-crimson-900/40">
+            Center: Model Answer A* • Orbit: Submissions S_i
+          </div>
+
+          <div className="absolute bottom-4 left-4 z-10 font-mono text-[10px] text-champagne-gold/70">
+            Interactive Node Geometry • Click node to inspect candidate
           </div>
         </div>
       );
@@ -434,7 +484,7 @@
         fetch('/api/datasets')
           .then(r => r.json())
           .then(d => setDatasets(d.datasets || []))
-          .catch(e => setError('Failed to reach backend API. Ensure backend_api.py is running on port 8000.'));
+          .catch(e => setError('Failed to connect to backend engine. Ensure backend_api.py is listening on port 8000.'));
       }, []);
 
       // Load Active Assessment
@@ -516,7 +566,7 @@
           });
       };
 
-      // Verbatim Quote Highlighter
+      // Verbatim Quote Highlighter with Clean Typography
       const renderEvidenceAnswer = (text, criteriaEvals) => {
         if (!criteriaEvals || criteriaEvals.length === 0) return <span>{text}</span>;
 
@@ -569,26 +619,26 @@
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-white text-base tracking-tight">RubricGrader AI</span>
+                  <span className="font-bold text-white text-base tracking-tight">RubricGrader</span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-crimson-950 border border-crimson-800 text-champagne-gold">
-                    AIML-2 EDTECH
+                    QUBRIX AIML-2
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400">Explainable Evaluation & Decoupled Regrading</div>
+                <div className="text-[11px] text-slate-400">Auditable Short-Answer Scoring & Decoupled Regrading</div>
               </div>
             </div>
 
             <div className="flex items-center gap-3 font-mono text-xs">
               <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-obsidian-950 border border-crimson-900/50 text-slate-300">
                 <span className="w-2 h-2 rounded-full bg-champagne-gold animate-pulse"></span>
-                <span>SPEED:</span>
+                <span>LATENCY:</span>
                 <span className="text-champagne-gold font-bold">
                   {regradeReport ? `${regradeReport.recalculation_latency_ms}ms` : '< 5ms'}
                 </span>
               </div>
 
               <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-obsidian-950 border border-crimson-900/50 text-emerald-400">
-                <span>✔ 4-Gram Guardrail</span>
+                <span>4-Gram Guardrail Active</span>
               </div>
 
               {/* Sound Synthesizer Switch */}
@@ -603,8 +653,9 @@
                     ? 'bg-crimson-950 border-crimson-600 text-champagne-gold shadow-glow-crimson' 
                     : 'bg-obsidian-950 border-slate-800 text-slate-500'
                 }`}
+                title="Toggle Web Audio Procedural Feedback"
               >
-                <span>{soundOn ? '🔊 SYNTH ON' : '🔇 MUTED'}</span>
+                <span>{soundOn ? 'Audio Synthesizer' : 'Muted'}</span>
               </button>
 
               <a 
@@ -613,7 +664,7 @@
                 rel="noreferrer"
                 className="px-3.5 py-1 rounded-full bg-obsidian-950 hover:bg-crimson-950 border border-crimson-800 text-slate-300 hover:text-white transition"
               >
-                Streamlit :8501 ➔
+                Streamlit Studio ➔
               </a>
             </div>
           </nav>
@@ -635,29 +686,38 @@
               </h1>
 
               <p className="text-sm md:text-base text-slate-300 leading-relaxed max-w-xl font-normal">
-                Eliminate subjective scoring and hours of painful regrading. Every mark is anchored to <strong className="text-champagne-gold font-semibold">character-accurate verbatim student quotes</strong> with <strong className="text-white font-semibold">sub-10ms decoupled dynamic regrading</strong> and zero model answer leakage.
+                Eliminate subjective scoring and hours of manual regrading. Every mark is anchored to <strong className="text-champagne-gold font-semibold">character-accurate verbatim student quotes</strong> with <strong className="text-white font-semibold">sub-10ms decoupled dynamic regrading</strong> and zero model answer leakage.
               </p>
 
               {/* Quick Hero Telemetry Row */}
               <div className="grid grid-cols-3 gap-3 max-w-lg pt-2">
-                <div className="p-3 rounded-xl bg-obsidian-900/60 border border-crimson-900/30">
-                  <div className="text-lg md:text-2xl font-extrabold text-champagne-gold">0.8062</div>
+                <div className="p-3.5 rounded-xl bg-obsidian-900/60 border border-crimson-900/30">
+                  <div className="text-xl md:text-2xl font-extrabold text-champagne-gold">0.8062</div>
                   <div className="text-[11px] font-mono text-slate-400 mt-0.5">QWK Agreement</div>
                 </div>
-                <div className="p-3 rounded-xl bg-obsidian-900/60 border border-crimson-900/30">
-                  <div className="text-lg md:text-2xl font-extrabold text-white">&lt; 5ms</div>
+                <div className="p-3.5 rounded-xl bg-obsidian-900/60 border border-crimson-900/30">
+                  <div className="text-xl md:text-2xl font-extrabold text-white">&lt; 5ms</div>
                   <div className="text-[11px] font-mono text-crimson-400 mt-0.5">Recalculation</div>
                 </div>
-                <div className="p-3 rounded-xl bg-obsidian-900/60 border border-crimson-900/30">
-                  <div className="text-lg md:text-2xl font-extrabold text-champagne-light">100%</div>
+                <div className="p-3.5 rounded-xl bg-obsidian-900/60 border border-crimson-900/30">
+                  <div className="text-xl md:text-2xl font-extrabold text-champagne-light">100%</div>
                   <div className="text-[11px] font-mono text-slate-400 mt-0.5">Offline Ready</div>
                 </div>
               </div>
             </div>
 
-            {/* Right 5 Columns: 3D Holographic Core */}
+            {/* Right 5 Columns: 3D Semantic Vector Space Visualizer */}
             <div className="md:col-span-5 rounded-3xl border border-crimson-900/40 bg-obsidian-900/50 shadow-glass-panel backdrop-blur-xl overflow-hidden p-2">
-              <HolographicCore />
+              <SemanticSpaceVisualizer 
+                students={assessment ? assessment.students : null}
+                selectedStudentId={selectedStudent ? selectedStudent.student_id : null}
+                onSelectStudent={(id) => {
+                  if (assessment) {
+                    const found = assessment.students.find(s => s.student_id === id);
+                    if (found) setSelectedStudent(found);
+                  }
+                }}
+              />
             </div>
 
           </section>
@@ -690,7 +750,7 @@
             </div>
 
             <label className="cursor-pointer px-4 py-2.5 rounded-xl bg-obsidian-950 hover:bg-crimson-950 border border-crimson-800/60 text-xs font-mono text-champagne-gold transition flex items-center gap-2 shrink-0">
-              <span>{uploading ? '⏳ Ingesting CSV...' : '📁 Ingest Custom CSV'}</span>
+              <span>{uploading ? 'Ingesting CSV...' : 'Ingest Custom CSV'}</span>
               <input 
                 type="file" 
                 accept=".csv" 
@@ -704,7 +764,7 @@
           {/* Error Message */}
           {error && (
             <div className="p-4 rounded-xl border border-red-500/50 bg-red-950/40 text-red-200 text-sm font-mono">
-              ⚠️ {error}
+              Notice: {error}
             </div>
           )}
 
@@ -753,40 +813,40 @@
                 </div>
               </section>
 
-              {/* --- 4-CARD EXECUTIVE KPI ROW --- */}
-              <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-panel">
-                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Submissions</div>
-                  <div className="text-3xl md:text-4xl font-extrabold text-white mt-1">
+              {/* --- UNIFIED EXECUTIVE TELEMETRY STRIP --- */}
+              <section className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-panel grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-crimson-900/30">
+                <div className="p-3 md:px-5">
+                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Cohort Submissions</div>
+                  <div className="text-3xl font-extrabold text-white mt-1">
                     {assessment.metrics.total_submissions}
                   </div>
                   <div className="text-[11px] font-mono text-emerald-400 mt-1">100% Ingested & Verified</div>
                 </div>
 
-                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-panel">
+                <div className="p-3 md:px-5">
                   <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Semantic Match</div>
-                  <div className="text-3xl md:text-4xl font-extrabold text-champagne-gold mt-1">
+                  <div className="text-3xl font-extrabold text-champagne-gold mt-1">
                     {assessment.metrics.avg_semantic_match}%
                   </div>
                   <div className="text-[11px] font-mono text-slate-400 mt-1">Dense Vector Cosine Sim</div>
                 </div>
 
-                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-panel">
-                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Avg Rubric Score</div>
-                  <div className="text-3xl md:text-4xl font-extrabold text-white mt-1">
+                <div className="p-3 md:px-5">
+                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Rubric Mean</div>
+                  <div className="text-3xl font-extrabold text-white mt-1">
                     {regradeReport ? regradeReport.new_avg_score : assessment.metrics.avg_rubric_score}
                     <span className="text-base font-normal text-slate-400">
                       {' '}/ {regradeReport ? regradeReport.new_max_score.toFixed(1) : assessment.metrics.max_possible_score.toFixed(1)}
                     </span>
                   </div>
                   <div className="text-[11px] font-mono text-crimson-400 mt-1">
-                    {regradeReport ? '⚡ Dynamic Recalculated' : 'Baseline Evaluated'}
+                    {regradeReport ? 'Dynamic Recalculated' : 'Baseline Evaluated'}
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl border border-crimson-900/30 bg-obsidian-900/80 shadow-glass-panel">
-                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Human Agreement (QWK)</div>
-                  <div className="text-3xl md:text-4xl font-extrabold text-champagne-gold mt-1">
+                <div className="p-3 md:px-5">
+                  <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">Inter-Rater QWK</div>
+                  <div className="text-3xl font-extrabold text-champagne-gold mt-1">
                     {regradeReport && regradeReport.new_qwk ? regradeReport.new_qwk.qwk_score.toFixed(3) : assessment.metrics.qwk_score.toFixed(3)}
                   </div>
                   <div className="text-[11px] font-mono text-champagne mt-1">
@@ -806,7 +866,7 @@
                         : 'border-transparent text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    📋 Student Evaluations ({assessment.students.length})
+                    Submissions ({assessment.students.length})
                   </button>
 
                   <button
@@ -817,7 +877,7 @@
                         : 'border-transparent text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    <span>⚡ Dynamic Regrading Lab</span>
+                    <span>Regrading Matrix</span>
                     <span className="bg-crimson-950 border border-crimson-700 text-champagne-gold text-[10px] px-2 py-0.5 rounded-full font-mono">
                       &lt;5ms
                     </span>
@@ -831,7 +891,7 @@
                         : 'border-transparent text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    <span>🔍 Borderline Queue</span>
+                    <span>Audit Queue</span>
                     <span className="bg-crimson text-white text-[10px] px-2 py-0.5 rounded-full font-mono">
                       {assessment.metrics.borderline_count}
                     </span>
@@ -845,7 +905,7 @@
                         : 'border-transparent text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    📥 Export & Audit
+                    Export & Data
                   </button>
                 </div>
 
@@ -853,7 +913,7 @@
                 {activeTab === 'evaluations' && (
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
                     
-                    {/* Left: Student Submission Cards */}
+                    {/* Left 5 Columns: Student Submission Cards */}
                     <div className="md:col-span-5 space-y-3">
                       <div className="font-mono text-xs text-slate-400 uppercase tracking-wider">
                         Submission Roster
@@ -904,7 +964,7 @@
                       </div>
                     </div>
 
-                    {/* Right: Detailed Evidence & Audit Desk */}
+                    {/* Right 7 Columns: Detailed Evidence & Audit Desk */}
                     <div className="md:col-span-7 space-y-4">
                       {selectedStudent ? (
                         <div className="p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-panel space-y-5">
@@ -943,7 +1003,7 @@
                                 Student Answer (Verbatim Evidence Anchors)
                               </span>
                               <span className="font-mono text-[10px] text-champagne-gold bg-obsidian-950 px-2.5 py-0.5 rounded-full border border-champagne-border">
-                                ★ Character-Accurate Quotes
+                                Character-Accurate Quotes
                               </span>
                             </div>
                             <div className="p-4 rounded-xl bg-obsidian-950/90 border border-crimson-900/40 text-sm leading-relaxed">
@@ -992,10 +1052,10 @@
                           <div className="p-4 rounded-xl bg-crimson-950/30 border border-crimson-800/40 space-y-2">
                             <div className="flex items-center justify-between">
                               <span className="font-mono text-xs uppercase tracking-wider text-champagne-gold font-bold">
-                                🛡️ Constructive Student Feedback
+                                Actionable Student Guidance
                               </span>
                               <span className="font-mono text-[10px] text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800">
-                                Anti-Leakage Certified (No Answer Key Disclosed)
+                                Audit Status: 4-Gram Leakage Free
                               </span>
                             </div>
                             <p className="text-xs text-slate-200 leading-relaxed font-medium">
@@ -1017,7 +1077,7 @@
                 {activeTab === 'regrade' && (
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
                     
-                    {/* Left: Dynamic Rubric Weight Sliders */}
+                    {/* Left 5 Columns: Dynamic Rubric Weight Sliders */}
                     <div className="md:col-span-5 p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-panel space-y-5">
                       <div className="border-b border-crimson-900/40 pb-3">
                         <span className="font-mono text-xs uppercase tracking-wider text-champagne-gold font-bold">
@@ -1059,11 +1119,11 @@
                         onClick={resetSliders}
                         className="w-full py-2.5 rounded-xl bg-obsidian-950 hover:bg-crimson-950 border border-crimson-800 text-xs font-mono text-champagne-gold transition"
                       >
-                        ↺ Reset Weights to Original Standard
+                        Reset Weights to Original Standard
                       </button>
                     </div>
 
-                    {/* Right: Real-time Before/After Diff Table */}
+                    {/* Right 7 Columns: Real-time Before/After Diff Table */}
                     <div className="md:col-span-7 p-6 rounded-2xl border border-crimson-800/40 bg-obsidian-900/90 shadow-glass-panel space-y-4">
                       <div className="flex items-center justify-between border-b border-crimson-900/40 pb-3">
                         <div>
@@ -1144,7 +1204,7 @@
                     <div className="space-y-3">
                       {assessment.students.filter(s => s.is_borderline).length === 0 ? (
                         <div className="p-12 text-center text-slate-400 font-mono text-xs">
-                          🎉 Zero borderline discrepancies detected. AI evaluations align seamlessly with human benchmark grades.
+                          Zero borderline discrepancies detected. AI evaluations align seamlessly with human benchmark grades.
                         </div>
                       ) : (
                         assessment.students.filter(s => s.is_borderline).map(s => (
@@ -1200,7 +1260,7 @@
                         href={`/api/export_csv?dataset_id=${encodeURIComponent(activeDatasetId)}`}
                         className="inline-flex px-6 py-3 rounded-xl bg-gradient-to-r from-crimson-neon via-crimson to-crimson-800 hover:opacity-95 text-white font-mono text-xs font-bold transition shadow-glow-crimson items-center gap-2"
                       >
-                        <span>📥 Download Graded Batch Report (.CSV)</span>
+                        <span>Download Graded Batch Report (.CSV)</span>
                       </a>
                     </div>
 
@@ -1223,7 +1283,7 @@
           {/* --- FOOTER --- */}
           <footer className="pt-8 pb-4 border-t border-crimson-900/30 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-slate-500 gap-3">
             <div>QUBRIX Hackathon • AIML Problem 2 (EdTech)</div>
-            <div className="text-champagne-gold/70">Engineered with React 18 • Three.js WebGL • FastAPI</div>
+            <div className="text-champagne-gold/70">React 18 • Three.js WebGL • FastAPI</div>
           </footer>
 
         </div>

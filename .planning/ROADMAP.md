@@ -9,7 +9,7 @@ A focused 4-phase execution roadmap designed for the QUBRIX 12-hour hackathon. W
 - [x] **Phase 1: Ingestion Pipeline & Local Semantic Similarity** - CSV parsing across multiple subjects and dense vector embedding cosine similarity against model answers.
 - [x] **Phase 2: Rubric Reasoner, Evidence Extractor & Non-Leaking Feedback** - Structured JSON evaluation of rubric criteria, verbatim quote extraction with substring guards, and socratic feedback synthesis.
 - [x] **Phase 3: Reliability Analysis & Dynamic Regrading Engine** - Quadratic Weighted Kappa calculation, borderline teacher triage, and sub-10ms decoupled rubric re-weighting with before/after diffing.
-- [ ] **Phase 4: Streamlit Interactive Dashboard & Demo Polish** - Full UI with multi-subject tabs, inline `<mark>` evidence highlighting, dynamic sliders, CSV report export, and offline cache safety.
+- [x] **Phase 4: Streamlit Interactive Dashboard & Demo Polish** - Full UI with multi-subject tabs, inline `<mark>` evidence highlighting, dynamic sliders, CSV report export, and offline cache safety.
 
 ---
 
@@ -76,8 +76,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 04-01: Build Streamlit application (`app.py`) with subject tabs, highlight cards, sliders, and diff table.
-- [ ] 04-02: Add offline disk cache, CSV report export, and package demo-safety runbook.
+- [x] 04-01: Build Streamlit application (`app.py`) with subject tabs, highlight cards, sliders, and diff table.
+- [x] 04-02: Add offline disk cache, CSV report export, and package demo-safety runbook.
 
 ---
 
@@ -91,4 +91,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | 1. Ingestion Pipeline & Semantic Vector Engine | 2/2 | Complete | 2026-11-17 |
 | 2. Rubric Reasoner & Evidence Extractor | 2/2 | Complete | 2026-11-17 |
 | 3. Reliability Analysis & Dynamic Regrading Engine | 2/2 | Complete | 2026-11-17 |
-| 4. Streamlit Interactive Dashboard & Demo Polish | 0/2 | Not started | - |
+| 4. Streamlit Interactive Dashboard & Demo Polish | 2/2 | Complete | 2026-11-17 |

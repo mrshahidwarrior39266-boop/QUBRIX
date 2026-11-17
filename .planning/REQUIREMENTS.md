@@ -70,13 +70,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |---|---|---|
-| INGEST-01, INGEST-02 | Phase 1 | Pending |
-| SIM-01, SIM-02 | Phase 1 | Pending |
-| RUBRIC-01, RUBRIC-02, EVIDENCE-01, EVIDENCE-02 | Phase 2 | Pending |
-| FEEDBACK-01, FEEDBACK-02 | Phase 2 | Pending |
-| METRIC-01, METRIC-02 | Phase 3 | Pending |
-| REGRADE-01, REGRADE-02, DIFF-01 | Phase 3 | Pending |
-| UI-01, UI-02, CACHE-01, EXPORT-01 | Phase 4 | Pending |
+| INGEST-01, INGEST-02 | Phase 1 | Complete ✓ |
+| SIM-01, SIM-02 | Phase 1 | Complete ✓ |
+| RUBRIC-01, RUBRIC-02, EVIDENCE-01, EVIDENCE-02 | Phase 2 | Complete ✓ |
+| FEEDBACK-01, FEEDBACK-02 | Phase 2 | Complete ✓ |
+| METRIC-01, METRIC-02 | Phase 3 | Complete ✓ |
+| REGRADE-01, REGRADE-02, DIFF-01 | Phase 3 | Complete ✓ |
+| UI-01, UI-02, CACHE-01, EXPORT-01 | Phase 4 | Complete ✓ |
 
 **Coverage:**
 - v1 requirements: 16 total

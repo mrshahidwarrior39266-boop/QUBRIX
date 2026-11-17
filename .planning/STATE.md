@@ -1,6 +1,6 @@
 ---
 gsd_state_version: '1.0'
-status: phase_complete
+status: ready_to_execute
 progress:
   total_phases: 4
   completed_phases: 3
@@ -20,10 +20,10 @@ See: `.planning/PROJECT.md` (updated 2026-11-17)
 
 ## Current Position
 
-Phase: 3 of 4 (Reliability Analysis & Dynamic Regrading Engine) — COMPLETED ✓  
-Plan: 6 of 6 plans completed across Phases 1, 2, and 3  
-Status: Phase 3 Complete; Ready to plan Phase 4  
-Last activity: 2026-11-17 — Executed and verified Phase 3 (29/29 unit tests passing)
+Phase: 4 of 4 (Streamlit Interactive Dashboard & Demo Polish)  
+Plan: 0 of 2 in current phase (04-01-PLAN.md, 04-02-PLAN.md created)  
+Status: Ready to execute Phase 4  
+Last activity: 2026-11-17 — Planned Phase 4 (Streamlit Dashboard, Highlighting & Polish)
 
 Progress: [███████▍░░] 75%
 
@@ -43,19 +43,19 @@ Progress: [███████▍░░] 75%
 | Phase 4: Streamlit UI & Demo Polish | 0/2 | - | - |
 
 **Recent Trend:**
-- Phase 3 verified: 29 tests passing; 50-answer batch regrading benchmarked in 7ms.
+- Planned Phase 4: Streamlit Dashboard with span highlighting, disk caching, and CSV export.
 
 ## Accumulated Context
 
 ### Decisions
 
-- QWK implemented with ordinal rating penalties and MAE support.
-- Borderline triage flags entries with $\Delta \ge 1.5$.
-- Dynamic regrader decouples math from LLM inference, achieving sub-10ms Before/After diff tables and live QWK updates.
+- HTML `<mark>` tags styled with inline CSS provide lightweight text highlighting without complex React packages.
+- Disk caching in `data/cache/` ensures 100% demo safety even without Wi-Fi.
+- Tabbed interface provides clear separation between Grading & Evidence, Dynamic Regrading, and Human Review.
 
 ### Pending Todos
 
-None. Ready for Phase 4 planning.
+None. Ready for Phase 4 execution.
 
 ### Blockers/Concerns
 
@@ -67,6 +67,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-11-17 22:36
-Stopped at: Phase 3 execution and verification complete. Ready for Phase 4.
+Last session: 2026-11-17 22:38
+Stopped at: Created execution plans 04-01-PLAN.md and 04-02-PLAN.md for Phase 4.
 Resume file: None

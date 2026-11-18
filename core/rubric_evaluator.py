@@ -16,6 +16,8 @@ import re
 from typing import Any, Dict, List, Optional
 import pandas as pd
 
+from core.synonym_engine import SynonymEngine
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -35,12 +37,14 @@ class RubricEvaluator:
     - Verbatim evidence quote extraction and literal substring verification.
     - Zero-network heuristic fallback when offline or without API keys.
     - In-memory result caching to eliminate redundant evaluations.
+    - Auditable synonym and domain acronym detection.
     """
 
-    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-2.0-flash"):
+    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-2.0-flash", sim_engine=None):
         self.api_key = api_key or os.environ.get("GEMINI_API_KEY")
         self.model_name = model_name
         self._cache: Dict[str, Dict[str, Any]] = {}
+        self.synonym_engine = SynonymEngine(sim_engine=sim_engine)
 
     def _verify_verbatim_quote(self, quote: str, student_answer: str) -> bool:
         """
@@ -58,7 +62,8 @@ class RubricEvaluator:
         model_answer: str,
         rubric: List[Dict[str, Any]],
         student_answer: str,
-        use_heuristic_fallback: bool = False
+        use_heuristic_fallback: bool = False,
+        subject: str = "Biology"
     ) -> Dict[str, Any]:
         """
         Evaluate a student answer against each criterion in the rubric.
@@ -108,12 +113,12 @@ class RubricEvaluator:
         # Check if we should use Cloud API or Local Heuristic Engine
         if self.api_key and not use_heuristic_fallback:
             try:
-                result = self._evaluate_with_gemini(question, model_answer, rubric, s_clean)
+                result = self._evaluate_with_gemini(question, model_answer, rubric, s_clean, subject=subject)
             except Exception as e:
                 logger.warning(f"Cloud API evaluation failed: {e}. Falling back to local heuristic.")
-                result = self._evaluate_with_heuristic(rubric, s_clean)
+                result = self._evaluate_with_heuristic(rubric, s_clean, subject=subject)
         else:
-            result = self._evaluate_with_heuristic(rubric, s_clean)
+            result = self._evaluate_with_heuristic(rubric, s_clean, subject=subject)
 
         self._cache[cache_key] = result
         return result
@@ -123,7 +128,8 @@ class RubricEvaluator:
         question: str,
         model_answer: str,
         rubric: List[Dict[str, Any]],
-        student_answer: str
+        student_answer: str,
+        subject: str = "Biology"
     ) -> Dict[str, Any]:
         """Call Gemini Flash API using structured JSON schema."""
         from google import genai
@@ -174,12 +180,13 @@ Respond STRICTLY with valid JSON following this schema:
         data = json.loads(response.text)
         raw_evals = {item["criterion_id"]: item for item in data.get("evaluations", [])}
 
-        return self._format_and_validate_results(rubric, raw_evals, student_answer, method="gemini_api")
+        return self._format_and_validate_results(rubric, raw_evals, student_answer, method="gemini_api", subject=subject)
 
     def _evaluate_with_heuristic(
         self,
         rubric: List[Dict[str, Any]],
-        student_answer: str
+        student_answer: str,
+        subject: str = "Biology"
     ) -> Dict[str, Any]:
         """
         Local heuristic evaluator based on concept keyword extraction, sentence-level
@@ -230,18 +237,19 @@ Respond STRICTLY with valid JSON following this schema:
                 "evaluator_note": note
             }
 
-        return self._format_and_validate_results(rubric, raw_evals, student_answer, method="local_heuristic")
+        return self._format_and_validate_results(rubric, raw_evals, student_answer, method="local_heuristic", subject=subject)
 
     def _format_and_validate_results(
         self,
         rubric: List[Dict[str, Any]],
         raw_evals: Dict[str, Dict[str, Any]],
         student_answer: str,
-        method: str
+        method: str,
+        subject: str = "Biology"
     ) -> Dict[str, Any]:
         """
         Enforce point arithmetic, validate that quotes are genuine substrings,
-        and assemble the final structured result.
+        detect synonyms, and assemble the final structured result.
         """
         final_evals = []
         total_awarded = 0.0
@@ -259,9 +267,32 @@ Respond STRICTLY with valid JSON following this schema:
 
             multiplier = STATUS_MULTIPLIERS[status]
             awarded = round(max_pts * multiplier, 2)
-            total_awarded += awarded
-
             quote = str(eval_item.get("evidence_quote", "")).strip()
+
+            # Detect synonyms or domain acronyms for transparent academic evidence
+            synonym_matches = self.synonym_engine.detect_synonyms(
+                student_answer=student_answer,
+                criterion_description=c["description"],
+                subject=subject
+            )
+
+            # If heuristic returned NONE or PARTIAL but a high-confidence synonym is found,
+            # ensure evidence quote captures the student's synonym phrase
+            if method == "local_heuristic" and not quote and synonym_matches:
+                for syn in synonym_matches:
+                    st_term = syn["student_term"]
+                    for sent in re.split(r"[.!?;\n]+", student_answer):
+                        if st_term.lower() in sent.lower():
+                            quote = sent.strip()
+                            if status == "NONE":
+                                status = "FULL"
+                                multiplier = 1.0
+                                awarded = max_pts
+                            break
+                    if quote:
+                        break
+
+            total_awarded += awarded
 
             # Programmatically verify that the quote physically exists in the student answer
             is_verified = self._verify_verbatim_quote(quote, student_answer) if quote else False
@@ -275,6 +306,8 @@ Respond STRICTLY with valid JSON following this schema:
                         is_verified = True
 
             note = eval_item.get("evaluator_note", f"Evaluated as {status}.")
+            if synonym_matches and "synonym" not in note.lower():
+                note += f" [Synonym matched: '{synonym_matches[0]['student_term']}' ≈ '{synonym_matches[0]['rubric_term']}']"
 
             final_evals.append({
                 "criterion_id": cid,
@@ -285,7 +318,8 @@ Respond STRICTLY with valid JSON following this schema:
                 "awarded_points": awarded,
                 "evidence_quote": quote,
                 "is_quote_verified": is_verified,
-                "evaluator_note": note
+                "evaluator_note": note,
+                "synonym_matches": synonym_matches
             })
 
         overall_pct = round((total_awarded / total_max) * 100.0, 1) if total_max > 0 else 0.0
